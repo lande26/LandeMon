@@ -1,1 +1,1 @@
-# LandeMon
+# LandeMon - A Movie Application
