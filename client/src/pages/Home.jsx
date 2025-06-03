@@ -188,6 +188,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Play, Star, Calendar, Clock, Menu, X, ChevronDown, Search, User, LogIn, Tv, Film, TrendingUp, Eye } from 'lucide-react';
+import "../index.css"
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
