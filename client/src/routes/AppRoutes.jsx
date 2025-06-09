@@ -1,47 +1,62 @@
-// import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// import Navbar from './components/ui/ui/Navbar'; // Assuming Navbar is in the components folder
-// import Home from '../pages/Home'; // Assuming Home is in the pages folder
-
-// const App = () => (
-//   <Router>
-    
-//     {/* Define Routes */}
-//     <Routes>
-//       <Route path="/" element={<Home />} />
-//       <Route path="/movies" element={<div>Movies Page (Coming Soon)</div>} />
-//       <Route path="/shows" element={<div>Shows Page (Coming Soon)</div>} />
-//     </Routes>
-//   </Router>
-// );
-
-// export default App;
-
-// src/routes/AppRoutes.jsx
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-// Import your pages
+import ULayout from '../components/layout/ULayout';
 import Home from '../pages/Home';
-// import Movies from '../pages/Movies';
-// import Shows from '../pages/Shows';
-// import MovieDetails from '../pages/MovieDetails';
-// import ShowDetails from '../pages/ShowDetails';
+import Login from '../pages/Login';
+import SignUp from '../pages/SignUp';
+import UserHome from '../pages/UserHome';
+import Movies from '../pages/Movies';
+import Shows from '../pages/Shows';
 
-const AppRoutes = () => {
-  return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* <Route path="/movies" element={<Movies />} />
-        <Route path="/shows" element={<Shows />} />
-        <Route path="/movie/:id" element={<MovieDetails />} />
-        <Route path="/show/:id" element={<ShowDetails />} />
-        <Route path="/search" element={<div>Search Results Page</div>} />
-        <Route path="/genre/:genre" element={<div>Genre Page</div>} />
-        <Route path="*" element={<div>404 - Page Not Found</div>} /> */}
-      </Routes>
-    </Layout>
-  );
-};
 
-export default AppRoutes;
+const router = createBrowserRouter([
+   {
+    path: '/',
+    element: (
+      <Layout>
+        <Home />
+      </Layout>
+    )
+  },
+  {
+    path: '/login',
+    element: <Login />
+  },
+  {
+    path: '/signup', 
+    element: <SignUp />
+  },
+  
+  {
+    path: '/user',
+    element: (
+        <ULayout>
+          <UserHome />
+        </ULayout>
+    )
+  },
+  {
+    path: '/user/movies',
+    element: (
+      <ULayout>
+        <Movies />
+      </ULayout>
+    )
+  },
+  {
+    path: '/user/shows',
+    element: (
+      <ULayout>
+        <Shows />
+      </ULayout>
+    )
+  },
+
+  {
+    path: '*',
+    element: <Navigate to="/" replace />
+  }
+]);
+
+export default router;

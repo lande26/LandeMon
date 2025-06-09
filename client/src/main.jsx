@@ -1,13 +1,26 @@
-// src/main.jsx - Make sure this is correct
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+// import React from 'react';
+// import ReactDOM from 'react-dom/client';
+// import './index.css';
+// import App from './App';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    {/* <div className="bg-red-500 text-white p-4">Tailwind Test</div> */}
-    <App />
-  </React.StrictMode>
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
+import React from 'react';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+import router from './routes/AppRoutes';
+// import { AuthProvider } from './context/AuthContext';
+import './index.css';
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    {/* <AuthProvider> */}
+      <RouterProvider router={router} />
+    {/* </AuthProvider> */}
+  </StrictMode>
 );
