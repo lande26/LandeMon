@@ -212,11 +212,11 @@ const Navbar = ({ isAuthenticated = false }) => {
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate('/auth/login');
   };
 
   const handleSignUp = () => {
-    navigate('/signup');
+    navigate('/auth/signup');
   };
 
   const handleLogout = () => {

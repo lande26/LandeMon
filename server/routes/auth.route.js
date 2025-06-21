@@ -1,3 +1,4 @@
+// File: server/routes/auth.route.js
 import express from 'express';
 import {signup,login,logout} from '../controllers/auth.js';
 const router = express.Router();

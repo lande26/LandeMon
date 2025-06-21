@@ -54,7 +54,7 @@ const HeroSection = ({ featuredContent, onWatchClick, onInfoClick }) => {
         </form>
 
         {/* Featured Content Preview */}
-        {featuredContent && (
+        {/* {featuredContent && (
           <div className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 max-w-2xl mx-auto">
             <h3 className="text-2xl font-semibold text-white mb-4">Featured Today</h3>
             <div className="flex items-center gap-6">
@@ -85,7 +85,7 @@ const HeroSection = ({ featuredContent, onWatchClick, onInfoClick }) => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
       </div>
 
       <style jsx="true">{`

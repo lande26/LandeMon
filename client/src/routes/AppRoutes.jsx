@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout';
 import ULayout from '../components/layout/ULayout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import SignUp from '../pages/SignUp';
+import Signup from '../pages/Signup';
 import UserHome from '../pages/UserHome';
 import Movies from '../pages/Movies';
 import Shows from '../pages/Shows';
@@ -20,12 +20,12 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: '/login',
+    path: '/auth/login',
     element: <Login />
   },
   {
-    path: '/signup', 
-    element: <SignUp />
+    path: '/auth/signup',
+    element: <Signup />
   },
   
   {
@@ -52,7 +52,22 @@ const router = createBrowserRouter([
       </ULayout>
     )
   },
-
+{
+  path: '/user/movies/:tmdbId',
+  element: (
+    <ULayout>
+      <Movies />
+    </ULayout>
+  )
+},
+{
+  path: '/user/shows/:tmdbId',
+  element: (
+    <ULayout>
+      <Shows />
+    </ULayout>
+  )
+},
   {
     path: '*',
     element: <Navigate to="/" replace />
