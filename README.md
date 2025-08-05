@@ -1,4 +1,4 @@
-# MovieWeb Kickstart Project
+# MovieWeb  Project
 
 A launching point for building a movie streaming website.
 
