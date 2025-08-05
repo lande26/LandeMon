@@ -1,1 +1,1 @@
-# Maxflix - A Movie Application
+# LandeMon - A Movie Application
