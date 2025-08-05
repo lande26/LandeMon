@@ -1,4 +1,4 @@
-# MovieWeb  Project
+# Movieko  Project
 
 A launching point for building a movie streaming website.
 
