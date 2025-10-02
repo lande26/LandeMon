@@ -11,36 +11,55 @@ export default function Index() {
       <section
         id="hero"
         aria-labelledby="hero-heading"
-        className="container mx-auto flex flex-col items-center justify-center gap-4 pb-8 pt-28 text-center md:pb-12 lg:py-32"
+        className="relative container mx-auto flex min-h-[90vh] flex-col items-center justify-center gap-8 overflow-hidden px-4 pt-20 pb-16 text-center lg:min-h-screen"
       >
-        <Link href={siteConfig.links.twitter} target="_blank" rel="noreferrer">
-          <Badge
-            aria-hidden="true"
-            className="rounded-md px-3.5 py-1.5"
-            variant="secondary"
-          >
-            <Icons.twitter className="mr-2 h-3.5 w-3.5" />
-            Follow along on Twitter
-          </Badge>
-          <span className="sr-only">Twitter</span>
-        </Link>
-        <h1 className="max-w-screen-lg text-center font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-          {siteConfig.name} - {siteConfig.slogan}
-          {/* {siteConfig.name} - watch tv shows online, watch movies online. */}
-          {/* An e-commerce skateshop built with everything new in Next.js 13 */}
-        </h1>
-        <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-          Step into a world where entertainment knows no boundaries, where your
-          screens come alive with an endless array of captivating stories.
-        </p>
-        <div className="space-x-4">
-          <Link className={`${buttonVariants({ size: "lg" })}`} href="/home">
-            Watch Now <ArrowRight className="ml-1 inline-block" />
-          </Link>
-          {/* <Link className={`${buttonVariants({ size: "lg", variant: "outline" })}`} href={siteConfig.links.github} target="_blank" */}
-          {/*   rel="noreferrer">GitHub</Link> */}
+
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-foreground via-foreground to-foreground/60 bg-clip-text text-transparent">
+            {siteConfig.name}
+          </h1>
+          <p className="text-xl sm:text-2xl md:text-3xl text-foreground/80 font-medium">
+            {siteConfig.slogan}
+          </p>
+          
+          <p className="max-w-3xl text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
+            Welcome to your personal movie universe. Explore thousands of films, binge the latest releases, and rediscover classics that defined cinema.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+            <Link 
+              href="/home"
+              className="group relative px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:scale-105 transition-transform duration-200 shadow-lg shadow-primary/50 flex items-center justify-center gap-2"
+            >
+              Watch Now
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            
+            <Link
+              href="/home"
+              className="px-8 py-4 bg-secondary text-secondary-foreground rounded-lg font-semibold text-lg hover:bg-secondary/80 transition-all duration-200 border border-border"
+            >
+              Browse Library
+            </Link>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mt-8 text-muted-foreground">
+            <div className="flex flex-col items-center">
+              <span className="text-3xl sm:text-4xl font-bold text-foreground">10K+</span>
+              <span className="text-sm sm:text-base">Movies</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-3xl sm:text-4xl font-bold text-foreground">4K</span>
+              <span className="text-sm sm:text-base">Quality</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-3xl sm:text-4xl font-bold text-foreground">24/7</span>
+              <span className="text-sm sm:text-base">Streaming</span>
+            </div>
+          </div>
         </div>
       </section>
+
       <section
         id="features"
         className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24"
@@ -144,11 +163,6 @@ export default function Index() {
             </div>
           </div>
         </div>
-        {/* <div className="mx-auto text-center md:max-w-[58rem]"> */}
-        {/*   <p className="leading-normal text-muted-foreground sm:text-lg sm:leading-7"> */}
-        {/*     Taxonomy also includes a blog and a full-featured documentation site */}
-        {/*   </p> */}
-        {/* </div> */}
       </section>
     </>
   );

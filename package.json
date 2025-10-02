@@ -30,7 +30,7 @@
     "axios": "^1.7.0-beta.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "framer-motion": "^10.12.4",
+    "framer-motion": "^10.18.0",
     "lucide-react": "^0.279.0",
     "next": "^14.1.0",
     "next-themes": "^0.2.1",

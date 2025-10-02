@@ -37,7 +37,6 @@ interface SearchResult {
 export function MainNav({ items }: MainNavProps) {
   const path = usePathname();
   const router = useRouter();
-  // search store
   const searchStore = useSearchStore();
   const [isScrolled, setIsScrolled] = React.useState(false);
 
@@ -102,8 +101,6 @@ export function MainNav({ items }: MainNavProps) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
-
-  // change background color on scroll
   React.useEffect(() => {
     const changeBgColor = () => {
       window.scrollY > 0 ? setIsScrolled(true) : setIsScrolled(false);
@@ -120,10 +117,11 @@ export function MainNav({ items }: MainNavProps) {
   return (
     <nav
       className={cn(
-        'relative flex h-12 w-full items-center justify-between bg-gradient-to-b from-secondary/70 from-10% px-[4vw] transition-colors duration-300 md:sticky md:h-16',
+        'relative flex h-12 w-full items-center justify-between overflow-hidden px-[4vw] transition-colors duration-300 md:sticky md:h-16',
         isScrolled ? 'bg-secondary shadow-md' : 'bg-transparent',
       )}>
-      <div className="flex items-center gap-6 md:gap-10">
+       
+      <div className="relative z-10 flex items-center gap-6 md:gap-10">
         <Link
           href="/"
           className="hidden md:block"
@@ -159,9 +157,7 @@ export function MainNav({ items }: MainNavProps) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-2 px-0 hover:bg-transparent focus:ring-0"
-                // className="h-auto px-2 py-1.5 text-base hover:bg-neutral-800 focus:ring-0 dark:hover:bg-neutral-800 lg:hidden"
-              >
+                className="flex items-center space-x-2 px-0 hover:bg-transparent focus:ring-0">
                 <Icons.logo className="h-6 w-6" />
                 <span className="text-base font-bold">Menu</span>
               </Button>
@@ -169,17 +165,12 @@ export function MainNav({ items }: MainNavProps) {
             <DropdownMenuContent
               align="start"
               sideOffset={20}
-              // className="w-52 overflow-y-auto overflow-x-hidden rounded-sm bg-neutral-800 text-slate-200 dark:bg-neutral-800 dark:text-slate-200"
               className="w-52 overflow-y-auto overflow-x-hidden rounded-sm">
               <DropdownMenuLabel>
                 <Link
                   href="/"
                   className="flex items-center justify-center"
                   onClick={() => handleChangeStatusOpen(false)}>
-                  {/* <Icons.logo */}
-                  {/*   className="mr-2 h-4 w-4 text-red-600" */}
-                  {/*   aria-hidden="true" */}
-                  {/* /> */}
                   <span className="">{siteConfig.name}</span>
                 </Link>
               </DropdownMenuLabel>
@@ -193,9 +184,6 @@ export function MainNav({ items }: MainNavProps) {
                     <Link
                       href={item.href}
                       onClick={() => handleChangeStatusOpen(false)}>
-                      {/* {item.icon &&  */}
-                      {/*   <item.icon className="mr-2 h-4 w-4" aria-hidden="true" /> */}
-                      {/* } */}
                       <span
                         className={cn(
                           'line-clamp-1 text-foreground/60 hover:text-foreground/80',
@@ -211,7 +199,8 @@ export function MainNav({ items }: MainNavProps) {
           </DropdownMenu>
         </div>
       </div>
-      <div className="flex items-center gap-1">
+      
+      <div className="relative z-10 flex items-center gap-1">
         <DebouncedInput
           id="search-input"
           open={searchStore.isOpen}
@@ -220,8 +209,16 @@ export function MainNav({ items }: MainNavProps) {
           onChangeStatusOpen={handleChangeStatusOpen}
           containerClassName={cn(path === '/' ? 'hidden' : 'flex')}
         />
+        <Link
+          rel="noreferrer"
+          target="_blank"
+          href={siteConfig.links.github}
+          className={cn(path === '/' ? 'flex' : 'hidden')}>
+          <Icons.gitHub className="h-5 w-5 hover:bg-transparent" />
+        </Link>
         <ThemeToggle />
       </div>
+        
     </nav>
   );
 }
