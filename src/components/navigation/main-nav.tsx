@@ -32,6 +32,9 @@ interface MainNavProps {
 
 interface SearchResult {
   results: Show[];
+  variant?: 'default' | 'light' | 'dark' | 'transparent';
+  textColor?: 'light' | 'dark';
+  hideOnScroll?: boolean;
 }
 
 export function MainNav({ items }: MainNavProps) {
