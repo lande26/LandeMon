@@ -38,13 +38,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID:
       process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID,
     NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME,
-    NEXT_PUBLIC_TWITTER: process.env.NEXT_PUBLIC_TWITTER ?? 'https://x.com',
-    NEXT_PUBLIC_FACEBOOK:
-      process.env.NEXT_PUBLIC_FACEBOOK ?? 'https://facebook.com',
-    NEXT_PUBLIC_INSTAGRAM:
-      process.env.NEXT_PUBLIC_INSTAGRAM ?? 'https://instagram.com',
-    NEXT_PUBLIC_YOUTUBE:
-      process.env.NEXT_PUBLIC_YOUTUBE ?? 'https://youtube.com',
+    NEXT_PUBLIC_TWITTER: process.env.NEXT_PUBLIC_TWITTER ?? 'https://x.com/KartikLande15',
     NEXT_PUBLIC_IMAGE_DOMAIN: process.env.NEXT_PUBLIC_IMAGE_DOMAIN,
   },
   /**

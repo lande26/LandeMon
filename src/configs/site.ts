@@ -35,7 +35,7 @@ export const siteConfig = {
   ogImage: `${env.NEXT_PUBLIC_APP_URL}/images/hero.jpg`,
   links: {
     twitter: `${env.NEXT_PUBLIC_TWITTER}`,
-    github: 'https://github.com/lande26/Movieko',
+    github: 'https://github.com/lande26/LandeMon',
     githubAccount: '',
   },
   footerItems: [
