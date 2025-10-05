@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "pages:build": "next-on-pages",
     "start": "next start",
     "lint": "next lint --cache",
     "format": "prettier --write .",
@@ -43,7 +44,6 @@
     "zod": "^3.22.3",
     "zustand": "^4.4.6",
     "@cloudflare/next-on-pages": "^1.11.3"
-
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.11.3",
