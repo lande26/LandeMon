@@ -29,7 +29,7 @@ const config = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  swcMinify: true,
+  // swcMinify: false,
 };
 
 export default config;

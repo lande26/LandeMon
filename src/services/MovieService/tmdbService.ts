@@ -1,3 +1,4 @@
+// src/services/MovieService/tmdbService.ts
 import { type Genre } from '@/enums/genre';
 import { type TmdbPagingResponse } from '@/enums/request-type';
 import tmdbClient from '@/lib/apiClient';
