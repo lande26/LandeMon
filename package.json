@@ -13,6 +13,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.1",
+    "@cloudflare/next-on-pages": "^1.11.3",
     "@next/third-parties": "^14.1.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -26,6 +28,10 @@
     "@trpc/next": "^10.38.5",
     "@trpc/react-query": "^10.38.5",
     "@trpc/server": "^10.38.5",
+    "@tsparticles/engine": "^3.9.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
+    "@upstash/redis": "^1.37.0",
     "@vercel/analytics": "^1.1.0",
     "@vercel/speed-insights": "^1.0.9",
     "axios": "^1.7.0-beta.2",
@@ -33,7 +39,8 @@
     "clsx": "^2.0.0",
     "framer-motion": "^10.18.0",
     "lucide-react": "^0.279.0",
-    "next": "^14.1.0",
+    "next": "^14.2.14",
+    "next-auth": "^5.0.0-beta.30",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -41,14 +48,16 @@
     "superjson": "^1.13.3",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
+    "usehooks-ts": "^3.1.1",
     "zod": "^3.22.3",
-    "zustand": "^4.4.6",
-    "@cloudflare/next-on-pages": "^1.11.3"
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.11.3",
+    "@prisma/client": "^5.22.0",
+    "@prisma/extension-accelerate": "1.2.x",
     "@types/eslint": "^8.44.2",
-    "@types/node": "^20.6.2",
+    "@types/node": "^20.19.37",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
@@ -61,7 +70,9 @@
     "postcss": "^8.4.29",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
+    "prisma": "^5.22.0",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }

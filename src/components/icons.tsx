@@ -14,6 +14,11 @@ import {
   VolumeX,
   Volume2,
   Snowflake,
+  Home,
+  Tv,
+  Film,
+  Clapperboard,
+  TrendingUp,
 } from "lucide-react";
 
 type IconProps = LucideProps;
@@ -231,4 +236,9 @@ export const Icons = {
   close: X,
   instagram: Instagram,
   youtube: Youtube,
+  home: Home,
+  tvShow: Tv,
+  movie: Film,
+  list: Clapperboard,
+  trendingUp: TrendingUp,
 };
