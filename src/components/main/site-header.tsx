@@ -38,31 +38,31 @@ const SiteHeader = async () => {
               <DialogTrigger asChild>
                 <Button variant="default" size="sm">Sign In</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md w-[90vw] md:w-full border-neutral-800 bg-zinc-950 text-white shadow-2xl">
+              <DialogContent className="sm:max-w-md w-[90vw] md:w-full border-border bg-background text-foreground shadow-2xl">
                 <DialogHeader className="flex flex-col items-center pt-4">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 border border-zinc-800">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary border border-border">
                     <Icons.logo className="h-6 w-6 text-primary" />
                   </div>
-                  <DialogTitle className="text-xl md:text-2xl font-bold tracking-tight text-white mb-2">Access {siteConfig.name}</DialogTitle>
-                  <DialogDescription className="text-center text-sm md:text-base text-zinc-400 font-medium px-4">
+                  <DialogTitle className="text-xl md:text-2xl font-bold tracking-tight text-foreground mb-2">Access {siteConfig.name}</DialogTitle>
+                  <DialogDescription className="text-center text-sm md:text-base text-muted-foreground font-medium px-4">
                     Sign in to sync your bookmarks, watch history, and reviews across all your devices.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-col gap-3 py-6 px-2">
                   <form action={async () => { "use server"; await signIn('google', { redirectTo: '/home' }) }}>
-                    <Button type="submit" variant="outline" className="w-full flex items-center justify-center gap-3 h-12 bg-white text-zinc-950 hover:bg-zinc-200 hover:text-zinc-950 border-none transition-colors">
+                    <Button type="submit" variant="outline" className="w-full flex items-center justify-center gap-3 h-12 bg-white text-black hover:bg-neutral-200 border border-border transition-colors">
                       <Icons.google className="h-5 w-5" />
                       <span className="font-semibold text-sm">Continue with Google</span>
                     </Button>
                   </form>
                   <form action={async () => { "use server"; await signIn('github', { redirectTo: '/home' }) }}>
-                    <Button type="submit" variant="outline" className="w-full flex items-center justify-center gap-3 h-12 bg-[#24292F] text-white hover:bg-[#24292F]/90 border-none transition-colors">
+                    <Button type="submit" variant="outline" className="w-full flex items-center justify-center gap-3 h-12 bg-[#24292F] text-white hover:bg-[#24292F]/90 border-transparent transition-colors">
                       <Icons.gitHub className="h-5 w-5" />
                       <span className="font-semibold text-sm">Continue with GitHub</span>
                     </Button>
                   </form>
                 </div>
-                <div className="text-center text-xs text-zinc-600 pb-2">
+                <div className="text-center text-xs text-muted-foreground pb-2">
                   By signing in, you agree to our Terms of Service and Privacy Policy.
                 </div>
               </DialogContent>
