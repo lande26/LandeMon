@@ -18,7 +18,7 @@ export type NavItem = {
   href?: string;
   disabled?: boolean;
   external?: boolean;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon?: string;
   onClick?: () => void;
 };
 

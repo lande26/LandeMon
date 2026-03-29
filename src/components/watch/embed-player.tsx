@@ -283,7 +283,6 @@
 // }
 
 'use client';
-
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import Loading from '../ui/loading';
 import Season from '../season';
@@ -292,22 +291,62 @@ import MovieService from '@/services/MovieService';
 import { type AxiosResponse } from 'axios';
 
 interface EmbedPlayerProps {
-  url: string;
-  movieId?: string;
-  mediaType?: MediaType;
+  tmdbId: string;
+  mediaType: MediaType;
 }
 
+const SERVERS = [
+  { id: 'vidsrc-cc', name: 'VidSrc CC (Default)' },
+  { id: 'vidsrc-xyz', name: 'VidSrc XYZ' },
+  { id: 'vidsync', name: 'VidSync' },
+  { id: 'vidlink', name: 'VidLink' },
+  { id: 'vidbinge', name: 'VidBinge' },
+  { id: 'vidnest', name: 'VidNest' },
+  { id: 'riveembed', name: 'RiveEmbed' },
+  { id: 'smashystream', name: 'SmashyStream' },
+];
+
 export default function EmbedPlayer({
-  url,
-  movieId,
+  tmdbId,
   mediaType,
 }: EmbedPlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const [seasons, setSeasons] = useState<ISeason[] | null>(null);
+  
+  const [selectedServer, setSelectedServer] = useState('vidsrc-cc');
+  const [currentEpisode, setCurrentEpisode] = useState<{s: number; e: number} | null>(null);
+  const hasLoaded = useRef(false);
+
+  const getEmbedUrl = useCallback((server: string, type: MediaType, id: string, season: number = 1, eps: number = 1) => {
+    const isMovie = type === MediaType.MOVIE;
+    switch(server) {
+      case 'vidsrc-xyz':
+        if (type === MediaType.ANIME) return `https://vidsrc.xyz/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
+        return isMovie ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
+      case 'vidsrc-cc':
+        if (type === MediaType.ANIME) return `https://vidsrc.cc/v2/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
+        return isMovie ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false` : `https://vidsrc.cc/v3/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
+      case 'vidsync':
+        return isMovie ? `https://vidsync.xyz/embed/movie/${id}?autoPlay=false` : `https://vidsync.xyz/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
+      case 'vidlink':
+        return isMovie ? `https://vidlink.pro/movie/${id}?autoplay=false` : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
+      case 'vidbinge':
+        return isMovie ? `https://vidbinge.dev/embed/movie/${id}` : `https://vidbinge.dev/embed/tv/${id}/${season}/${eps}`;
+      case 'vidnest':
+        return isMovie ? `https://vidnest.fun/movie/${id}` : `https://vidnest.fun/tv/${id}/${season}/${eps}`;
+      case 'riveembed':
+        return isMovie ? `https://rivestream.org/embed?type=movie&id=${id}` : `https://rivestream.org/embed?type=tv&id=${id}&season=${season}&episode=${eps}`;
+      case 'smashystream':
+        return isMovie ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${season}&episode=${eps}`;
+      default:
+        return isMovie ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
+    }
+  }, []);
 
   const setIframeUrl = (newUrl: string) => {
     if (!iframeRef.current) return;
+    console.log(`Loading Stream Server: ${newUrl}`);
     iframeRef.current.src = newUrl;
     iframeRef.current.style.opacity = '0';
     loadingRef.current?.style.setProperty('display', 'flex');
@@ -319,17 +358,32 @@ export default function EmbedPlayer({
     loadingRef.current?.style.setProperty('display', 'none');
   };
 
+  const updateIframe = useCallback((serverKey: string, passedS?: number, passedE?: number) => {
+    const finalS = passedS ?? currentEpisode?.s ?? 1;
+    const finalE = passedE ?? currentEpisode?.e ?? 1;
+    const newUrl = getEmbedUrl(serverKey, mediaType, tmdbId, finalS, finalE);
+    setIframeUrl(newUrl);
+  }, [mediaType, tmdbId, currentEpisode, getEmbedUrl]);
+
   const handleChangeEpisode = (episode: IEpisode) => {
-    const { show_id: id, episode_number: eps } = episode;
-    setIframeUrl(`https://vidsrc.cc/v2/embed/anime/tmdb${id}/${eps}/sub`);
+    const s = episode.season_number;
+    const e = episode.episode_number;
+    setCurrentEpisode({ s, e });
+    updateIframe(selectedServer, s, e);
   };
 
-  const loadAnime = useCallback(async (id: string) => {
-    const numericId = Number(id.replace('t-', ''));
+  const loadShows = useCallback(async (id: string) => {
+    // Determine numeric ID correctly if it passed 't-1234'
+    const numericId = Number(id.replace('t-', '').replace('m-', ''));
 
     const res: AxiosResponse<Show> = await MovieService.findTvSeries(numericId);
 
-    if (!res.data?.seasons?.length) return;
+    if (!res.data?.seasons?.length) {
+      if (mediaType !== MediaType.MOVIE) {
+        updateIframe(selectedServer, 1, 1);
+      }
+      return;
+    }
 
     const filteredSeasons = res.data.seasons.filter(
       (season: ISeason) => season.season_number,
@@ -344,10 +398,9 @@ export default function EmbedPlayer({
       seasonWithEpisodes.map((response: AxiosResponse<ISeason>) => response.data),
     );
 
-    setIframeUrl(
-      `https://vidsrc.cc/v2/embed/anime/tmdb${numericId}/1/sub?autoPlay=false`,
-    );
-  }, []);
+    setCurrentEpisode({ s: 1, e: 1 });
+    updateIframe(selectedServer, 1, 1);
+  }, [selectedServer, updateIframe, mediaType]);
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -358,19 +411,40 @@ export default function EmbedPlayer({
   }, []);
 
   useEffect(() => {
-    if (mediaType === MediaType.ANIME && movieId) {
-      void loadAnime(movieId);
-      return;
+    if (hasLoaded.current) return; // Prevent double trigger in React StrictMode
+    
+    if (mediaType === MediaType.ANIME || mediaType === MediaType.TV) {
+      void loadShows(tmdbId);
+    } else {
+      updateIframe(selectedServer);
     }
+    hasLoaded.current = true;
+  }, [mediaType, tmdbId, loadShows, updateIframe, selectedServer]);
 
-    // For non-anime, use original behavior
-    if (iframeRef.current) {
-      iframeRef.current.src = url;
-    }
-  }, [mediaType, movieId, url, loadAnime]);
+  const handleServerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newServer = e.target.value;
+    setSelectedServer(newServer);
+    updateIframe(newServer);
+  };
 
   return (
     <div className="relative h-[100dvh] w-full bg-black">
+      
+      <div className="absolute top-4 right-4 z-50 flex items-center space-x-2 bg-black/60 p-2 rounded-xl backdrop-blur-md border border-white/10">
+        <span className="text-white text-sm font-medium">Server:</span>
+        <select
+          value={selectedServer}
+          onChange={handleServerChange}
+          className="bg-transparent text-white text-sm font-medium outline-none cursor-pointer px-1"
+        >
+          {SERVERS.map(s => (
+            <option key={s.id} value={s.id} className="bg-neutral-900 text-white">
+              {s.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {seasons && (
         <Season seasons={seasons} onChangeEpisode={handleChangeEpisode} />
       )}

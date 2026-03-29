@@ -7,14 +7,13 @@ export const revalidate = 3600;
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const id = slug.split('-').pop();
-  const movieId: string | undefined = slug.split('/').pop();
+  const id = slug.split('-').pop() ?? '';
+  // Add base url later, we don't care now since we generate it in EmbedPlayer
   
   return (
     <EmbedPlayer
-      movieId={movieId}
-      mediaType={movieId?.includes('t') ? MediaType.ANIME : undefined}
-      url={`https://vidsrc.cc/v2/embed/anime/tmdb${id}?autoPlay=false`}
+      tmdbId={id}
+      mediaType={MediaType.ANIME}
     />
   );
 }
