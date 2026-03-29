@@ -361,7 +361,15 @@ export default function EmbedPlayer({
   const updateIframe = useCallback((serverKey: string, passedS?: number, passedE?: number) => {
     const finalS = passedS ?? currentEpisode?.s ?? 1;
     const finalE = passedE ?? currentEpisode?.e ?? 1;
-    const newUrl = getEmbedUrl(serverKey, mediaType, tmdbId, finalS, finalE);
+    const rawUrl = getEmbedUrl(serverKey, mediaType, tmdbId, finalS, finalE);
+    
+    // Route the stream through our Cloudflare Ad-Mitigation Proxy layer!
+    const PROXY_URL = process.env.NODE_ENV === "development" 
+      ? "http://localhost:8787" 
+      : "https://lande-mon-ad-proxy.your-cloudflare-username.workers.dev"; // We will update this production URL later!
+      
+    const newUrl = `${PROXY_URL}/?url=${encodeURIComponent(rawUrl)}`;
+    
     setIframeUrl(newUrl);
   }, [mediaType, tmdbId, currentEpisode, getEmbedUrl]);
 
@@ -457,10 +465,10 @@ export default function EmbedPlayer({
 
       <iframe
         ref={iframeRef}
-        className="h-full w-full border-none transition-opacity duration-300"
+        className="h-full w-full border-none transition-opacity duration-300 bg-neutral-900"
         allowFullScreen
         referrerPolicy="no-referrer-when-downgrade"
-        style={{ opacity: 0 }}
+        style={{ opacity: 1 }}
       />
     </div>
   );
