@@ -10,7 +10,8 @@
     "lint": "next lint --cache",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
