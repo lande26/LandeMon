@@ -5,16 +5,31 @@ import { siteConfig } from "@/configs/site";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { SparklesCore } from "@/components/ui/sparkles";
+
 export default function Index() {
   return (
     <>
       <section
         id="hero"
         aria-labelledby="hero-heading"
-        className="relative container mx-auto flex min-h-[90vh] flex-col items-center justify-center gap-8 overflow-hidden px-4 pt-20 pb-16 text-center lg:min-h-screen"
+        className="relative flex w-full min-h-[90vh] flex-col items-center justify-center overflow-hidden text-center lg:min-h-screen"
       >
+        <div className="w-full absolute inset-0 z-0">
+          <SparklesCore
+            id="tsparticlesfullpage"
+            background="transparent"
+            minSize={0.6}
+            maxSize={1.4}
+            particleDensity={100}
+            className="w-full h-full"
+            particleColor="#FFFFFF"
+            speed={1}
+          />
+          <div className="absolute inset-0 w-full h-full bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black_80%)]"></div>
+        </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-6">
+        <div className="relative z-10 container mx-auto flex flex-col items-center gap-6 px-4 pt-20 pb-16">
           <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-foreground via-foreground to-foreground/60 bg-clip-text text-transparent">
             {siteConfig.name}
           </h1>

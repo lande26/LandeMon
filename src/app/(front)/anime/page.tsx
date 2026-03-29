@@ -2,7 +2,7 @@
 import Hero from '@/components/hero';
 import ShowsContainer from '@/components/shows-container';
 import { siteConfig } from '@/configs/site';
-import { Genre } from '@/enums/genre';
+// import { Genre } from '@/enums/genre';
 import { RequestType, type ShowRequest } from '@/enums/request-type';
 import { getRandomShow } from '@/lib/utils';
 import MovieService from '@/services/MovieService';

@@ -13,7 +13,6 @@ import { env } from '@/env.mjs';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from 'next/script';
 
-export const runtime = 'edge';
 
 const fontSans = FontSans({
   subsets: ['latin'],

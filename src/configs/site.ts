@@ -48,27 +48,27 @@ export const siteConfig = {
     {
       title: 'Home',
       href: '/home',
-      // icon: Icons.play,
+      icon: 'home',
     },
     {
       title: 'TV Shows',
       href: '/tv-shows',
-      // icon: Icons.tvShow,
+      icon: 'tvShow',
     },
     {
       title: 'Movies',
       href: '/movies',
-      // icon: Icons.movie,
+      icon: 'movie',
     },
     {
       title: 'Anime',
       href: '/anime',
-      // icon: Icons.list,
+      icon: 'list',
     },
     {
       title: 'New & Popular',
       href: '/new-and-popular',
-      // icon: Icons.trendingUp,
+      icon: 'trendingUp',
     },
   ],
 };
