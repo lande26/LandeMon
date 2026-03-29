@@ -134,7 +134,7 @@ export function MainNav({ items, children }: MainNavProps) {
             className="flex items-center space-x-2 transition-transform hover:scale-105"
             onClick={() => handleChangeStatusOpen(false)}>
             <Icons.logo className="h-7 w-7 text-primary drop-shadow-md" aria-hidden="true" />
-            <span className="hidden lg:inline-block font-black text-xl tracking-tight text-white drop-shadow-md">{siteConfig.name}</span>
+            <span className="hidden lg:inline-block font-black text-xl tracking-tight text-foreground drop-shadow-md">{siteConfig.name}</span>
           </Link>
         }
         mobileMenuNode={

@@ -96,8 +96,8 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
                 onMouseLeave={() => setHoveredTab(null)}
                 className={cn(
                   "relative cursor-pointer text-sm font-semibold px-4 py-2 sm:px-6 sm:py-3 rounded-full transition-all duration-300",
-                  "text-white/70 hover:text-white",
-                  isActive && "text-white"
+                  "text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground drop-shadow-sm"
                 )}
               >
                 {isActive && (
@@ -150,7 +150,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
-                      className="absolute inset-0 bg-white/10 rounded-full -z-10"
+                      className="absolute inset-0 bg-foreground/10 rounded-full -z-10"
                     />
                   )}
                 </AnimatePresence>
@@ -168,7 +168,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
                   >
                     <div className="relative w-10 h-8 flex justify-center items-end overflow-hidden">
                       <motion.div
-                        className="w-8 h-6 bg-white rounded-t-lg relative"
+                        className="w-8 h-6 bg-foreground rounded-t-lg relative"
                         animate={
                           hoveredTab ? {
                             y: [0, -2, 0],
@@ -187,8 +187,8 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
                         }
                       >
                         {/* Ears */}
-                        <div className="absolute -top-2 left-0 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-white transform -rotate-12" />
-                        <div className="absolute -top-2 right-0 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-white transform rotate-12" />
+                        <div className="absolute -top-2 left-0 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-foreground transform -rotate-12" />
+                        <div className="absolute -top-2 right-0 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-foreground transform rotate-12" />
                         
                         {/* Inner Ears (Pink) */}
                         <div className="absolute -top-1 left-[2px] w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-b-[4px] border-b-pink-300 transform -rotate-12 z-10" />
@@ -196,7 +196,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
 
                         {/* Eyes */}
                         <motion.div 
-                          className="absolute w-1.5 h-1.5 bg-black rounded-full top-2 left-1.5"
+                          className="absolute w-1.5 h-1.5 bg-background rounded-full top-2 left-1.5"
                           animate={
                             hoveredTab ? {
                               scaleY: [1, 0.1, 1],
@@ -205,7 +205,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
                           }
                         />
                         <motion.div 
-                          className="absolute w-1.5 h-1.5 bg-black rounded-full top-2 right-1.5"
+                          className="absolute w-1.5 h-1.5 bg-background rounded-full top-2 right-1.5"
                           animate={
                             hoveredTab ? {
                               scaleY: [1, 0.1, 1],
@@ -219,13 +219,13 @@ export function AnimeNavBar({ items, className, defaultActive = "Home", leftNode
                         <div className="absolute top-3 right-0.5 w-1.5 h-1 bg-pink-300 rounded-full opacity-60" />
 
                         {/* Mouth (Little w) */}
-                        <svg className="absolute top-2.5 left-1/2 -translate-x-1/2 w-3 h-1.5 text-black" viewBox="0 0 10 5" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="absolute top-2.5 left-1/2 -translate-x-1/2 w-3 h-1.5 text-background" viewBox="0 0 10 5" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M1,2 Q2.5,5 5,2 Q7.5,5 9,2" />
                         </svg>
 
                         {/* Little paws peering over */}
-                        <div className="absolute -top-1 left-1.5 w-2 h-1.5 bg-white rounded-t-full shadow-sm" />
-                        <div className="absolute -top-1 right-1.5 w-2 h-1.5 bg-white rounded-t-full shadow-sm" />
+                        <div className="absolute -top-1 left-1.5 w-2 h-1.5 bg-foreground rounded-t-full shadow-sm" />
+                        <div className="absolute -top-1 right-1.5 w-2 h-1.5 bg-foreground rounded-t-full shadow-sm" />
                       </motion.div>
                     </div>
                   </motion.div>
