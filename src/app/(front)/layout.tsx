@@ -1,6 +1,8 @@
 import SiteFooter from '@/components/main/site-footer';
 import SiteHeader from '@/components/main/site-header';
 
+export const dynamic = 'force-dynamic';
+
 const FrontLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen">
