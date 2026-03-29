@@ -217,6 +217,7 @@ import {
 } from '@/enums/request-type';
 import { Genre } from '@/enums/genre';
 import { cache } from 'react';
+import { getCached } from '@/lib/cache';
 
 const requestTypesNeedUpdateMediaType = [
   RequestType.TOP_RATED,
@@ -225,7 +226,7 @@ const requestTypesNeedUpdateMediaType = [
   RequestType.GENRE,
   RequestType.KOREAN,
 ];
-const baseUrl = 'https://api.themoviedb.org/3';
+const baseUrl = 'https://api.tmdb.org/3';
 
 class MovieService extends BaseService {
   static async findCurrentMovie(id: number, pathname: string): Promise<Show> {
@@ -242,46 +243,65 @@ class MovieService extends BaseService {
         return pathname.includes(getSlug(item.id, getNameFromShow(item)));
       });
     if (!response?.length) {
-      return Promise.reject('not found');
+      return Promise.reject(new Error('not found'));
     }
     return Promise.resolve<Show>(response[0]);
   }
 
   static findMovie = cache(async (id: number) => {
-    return this.axios(baseUrl).get<Show>(
-      `/movie/${id}?append_to_response=keywords`,
-    );
+    const data = await getCached(`cache:movie:${id}`, 604800, async () => {
+      const res = await this.axios(baseUrl).get<Show>(
+        `/movie/${id}?append_to_response=keywords`,
+      );
+      return res.data;
+    });
+    return { data } as AxiosResponse<Show>;
   });
 
   static findTvSeries = cache(async (id: number) => {
-    return this.axios(baseUrl).get<Show>(
-      `/tv/${id}?append_to_response=keywords`,
-    );
+    const data = await getCached(`cache:tv:${id}`, 604800, async () => {
+      const res = await this.axios(baseUrl).get<Show>(
+        `/tv/${id}?append_to_response=keywords`,
+      );
+      return res.data;
+    });
+    return { data } as AxiosResponse<Show>;
   });
 
   static async getKeywords(
     id: number,
     type: 'tv' | 'movie',
   ): Promise<AxiosResponse<KeyWordResponse>> {
-    return this.axios(baseUrl).get<KeyWordResponse>(`/${type}/${id}/keywords`);
+    const data = await getCached(`cache:keywords:${type}:${id}`, 604800, async () => {
+      const res = await this.axios(baseUrl).get<KeyWordResponse>(`/${type}/${id}/keywords`);
+      return res.data;
+    });
+    return { data } as AxiosResponse<KeyWordResponse>;
   }
 
   static async getSeasons(
     id: number,
     season: number,
   ): Promise<AxiosResponse<ISeason>> {
-    return this.axios(baseUrl).get<ISeason>(`/tv/${id}/season/${season}`);
+    const data = await getCached(`cache:seasons:${id}:${season}`, 604800, async () => {
+      const res = await this.axios(baseUrl).get<ISeason>(`/tv/${id}/season/${season}`);
+      return res.data;
+    });
+    return { data } as AxiosResponse<ISeason>;
   }
 
   static findMovieByIdAndType = cache(async (id: number, type: string) => {
-    const params: Record<string, string> = {
-      language: 'en-US',
-      append_to_response: 'videos,keywords',
-    };
-    const response: AxiosResponse<ShowWithGenreAndVideo> = await this.axios(
-      baseUrl,
-    ).get<ShowWithGenreAndVideo>(`/${type}/${id}`, { params });
-    return Promise.resolve(response.data);
+    const data = await getCached(`cache:details:${type}:${id}`, 604800, async () => {
+      const params: Record<string, string> = {
+        language: 'en-US',
+        append_to_response: 'videos,keywords',
+      };
+      const response: AxiosResponse<ShowWithGenreAndVideo> = await this.axios(
+        baseUrl,
+      ).get<ShowWithGenreAndVideo>(`/${type}/${id}`, { params });
+      return response.data;
+    });
+    return Promise.resolve(data);
   });
 
   static urlBuilder(req: TmdbRequest) {
@@ -348,7 +368,11 @@ class MovieService extends BaseService {
     mediaType: MediaType;
     page?: number;
   }) {
-    return this.axios(baseUrl).get<TmdbPagingResponse>(this.urlBuilder(req));
+    const url = this.urlBuilder(req);
+    return getCached(`cache:req:${url}`, 3600, async () => {
+      const response = await this.axios(baseUrl).get<TmdbPagingResponse>(url);
+      return response.data;
+    }).then(data => ({ data } as AxiosResponse<TmdbPagingResponse>));
   }
 
   static getShows = cache(async (requests: ShowRequest[]) => {
@@ -386,16 +410,18 @@ class MovieService extends BaseService {
   });
 
   static searchMovies = cache(async (query: string, page?: number) => {
-    const { data } = await this.axios(baseUrl).get<TmdbPagingResponse>(
-      `/search/multi?query=${encodeURIComponent(query)}&language=en-US&page=${
-        page ?? 1
-      }`,
-    );
-
-    data.results.sort((a, b) => {
-      return b.popularity - a.popularity;
+    return getCached(`cache:search:${query}:${page ?? 1}`, 900, async () => {
+      const { data } = await this.axios(baseUrl).get<TmdbPagingResponse>(
+        `/search/multi?query=${encodeURIComponent(query)}&language=en-US&page=${
+          page ?? 1
+        }`,
+      );
+      
+      data.results.sort((a, b) => {
+        return b.popularity - a.popularity;
+      });
+      return data;
     });
-    return data;
   });
 }
 

@@ -6,9 +6,6 @@ import axios, {
 } from 'axios';
 import { env } from '@/env.mjs';
 
-/**
- * @class BaseService
- */
 class BaseService {
   constructor() {
     if (this.constructor === BaseService) {
@@ -23,9 +20,7 @@ class BaseService {
     const onRequest = (
       config: InternalAxiosRequestConfig,
     ): InternalAxiosRequestConfig => {
-      if (config.baseURL?.includes('themoviedb')) {
-        // const params = config.params as Record<string, unknown>;
-        // config.params = { ...params, api_key: env.NEXT_PUBLIC_TMDB_API_KEY };
+      if (config.baseURL?.includes('tmdb')) {
         config.headers.Authorization = `Bearer ${env.NEXT_PUBLIC_TMDB_TOKEN}`;
       }
       return config;
@@ -39,13 +34,12 @@ class BaseService {
     };
 
     instance.interceptors.request.use(onRequest, onErrorResponse);
-
     return instance;
   }
 
   static getConfig(baseUrl: string): AxiosRequestConfig {
     return {
-      timeout: 15000,
+      timeout: 60000,
       baseURL: baseUrl,
       responseType: 'json',
       maxContentLength: 100000,
