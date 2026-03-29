@@ -1,7 +1,26 @@
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
-    const targetUrl = url.searchParams.get('url');
+    let targetUrl = url.searchParams.get('url');
+
+    // If it's a relative asset request (like /saas/css/embed.min.css) without a ?url= parameter,
+    // we must deduce the target server by looking at the Referer header (e.g. http://localhost:8787/?url=https://vidsrc.cc/...)
+    if (!targetUrl) {
+      const referer = request.headers.get('Referer');
+      if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+          const refererTarget = refererUrl.searchParams.get('url');
+          if (refererTarget) {
+            const origin = new URL(refererTarget).origin;
+            // Reconstruct the actual asset URL pointing back to the original streaming server
+            targetUrl = origin + url.pathname + url.search;
+          }
+        } catch (e) {
+          // Ignore invalid referer parsing errors
+        }
+      }
+    }
 
     if (!targetUrl) {
       return new Response('Missing target URL parameter', { status: 400 });
@@ -28,13 +47,14 @@ export default {
 
       // 2. Only modify HTML responses
       if (contentType.includes('text/html')) {
-        // Strip out malicious ad networks and click-overlay scripts, AND rewrite relative assets
+        // We don't need to rewrite relative paths natively anymore because the Referer logic handles it,
+        // but it's safe to leave the malicious ad-blocker HTMLRewriter intact!
         finalResponse = new HTMLRewriter()
           .on('script', {
             element(e: any) {
               const src = e.getAttribute('src');
               if (src) {
-                // Block ads
+                // Block intrusive click-ad networks
                 const blocked = [
                   'adsterra', 'popads', 'onclick', 'propeller', 
                   'exoclick', 'popcash', 'realsrv', 'histats'
@@ -43,28 +63,6 @@ export default {
                   e.remove();
                   return;
                 }
-                
-                // Rewrite relative JS
-                if (src.startsWith('/')) {
-                  e.setAttribute('src', targetOrigin + src);
-                }
-              }
-            }
-          })
-          .on('link', {
-            element(e: any) {
-              const href = e.getAttribute('href');
-              // Rewrite relative CSS
-              if (href && href.startsWith('/')) {
-                e.setAttribute('href', targetOrigin + href);
-              }
-            }
-          })
-          .on('img', {
-            element(e: any) {
-              const src = e.getAttribute('src');
-              if (src && src.startsWith('/')) {
-                e.setAttribute('src', targetOrigin + src);
               }
             }
           })
