@@ -1,228 +1,294 @@
-# Landemon 🎬
+<div align="center">
 
-A modern, full-featured movie streaming platform built with Next.js. Discover, watch, and review thousands of movies with an elegant and responsive interface.
+<br/>
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flande26%2Fmovieko&env=NEXT_PUBLIC_APP_URL,NEXT_PUBLIC_TMDB_TOKEN,NEXT_PUBLIC_SITE_NAME&envDescription=Required%20environment%20variables%20for%20Landemon&envLink=https%3A%2F%2Fgithub.com%2Flande26%2Fmovieko%23environment-variables&project-name=landemon&repository-name=landemon)
-
-## ✨ Features
-
-### 🎥 Movie Discovery
-- **Extensive Library**: Browse thousands of movies from The Movie Database (TMDb)
-- **Smart Filtering**: Sort by genre, release date, popularity, and rating
-- **Advanced Search**: Find movies by title, director, cast, or keywords
-- **Trending Content**: Discover what's popular right now
-
-### 🎯 Personalized Experience
-- **Recommendation Engine**: Get tailored movie suggestions based on your viewing history and preferences
-- **User Ratings**: Rate movies on a 10-point scale and see community averages
-- **Review System**: Write detailed reviews and read what others think
-
-### 🎬 Streaming
-- **High-Quality Playback**: Stream movies directly through integrated video sources
-- **Multiple Sources**: Powered by Vidsrc.cc for reliable streaming links
-- **Seamless Experience**: No redirects or external players needed
-
-### 📱 Modern Design
-- **Responsive Layout**: Perfect experience on desktop, tablet, and mobile devices
-- **Fast Performance**: Optimized with Next.js for lightning-fast page loads
-- **Beautiful UI**: Clean, modern interface built with Tailwind CSS
-
-## 🚀 Quick Deploy
-
-### Deploy with Vercel (Recommended)
-
-Click the button below to deploy your own instance:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Flande26%2Fmovieko&env=NEXT_PUBLIC_APP_URL,NEXT_PUBLIC_TMDB_TOKEN,NEXT_PUBLIC_SITE_NAME&envDescription=Required%20environment%20variables%20for%20Landemon&envLink=https%3A%2F%2Fgithub.com%2Flande26%2Fmovieko%23environment-variables&project-name=landemon&repository-name=landemon)
-
-**After clicking:**
-1. Sign in to Vercel (or create an account)
-2. The repository will be forked to your GitHub account
-3. Configure the following environment variables:
-   - `NEXT_PUBLIC_APP_URL`: Your deployment URL (e.g., `https://landemon.vercel.app`)
-   - `NEXT_PUBLIC_TMDB_TOKEN`: Your TMDb API key ([get one here](https://www.themoviedb.org/settings/api))
-   - `NEXT_PUBLIC_SITE_NAME`: `Landemon` (or customize to your preference)
-4. Click "Deploy" and wait for the build to complete
-5. Your movie streaming platform will be live! 🎉
-
-### Deploy with Cloudflare Pages
-
-For Cloudflare Pages deployment:
-
-1. Fork this repository to your GitHub account
-2. Log in to [Cloudflare Pages](https://pages.cloudflare.com/)
-3. Click "Create a project" → "Connect to Git"
-4. Select your forked repository
-5. Configure build settings:
-   - **Framework preset**: Next.js
-   - **Build command**: `npx @cloudflare/next-on-pages@1`
-   - **Build output directory**: `.vercel/output/static`
-6. Add environment variables (same as Vercel)
-7. Click "Save and Deploy"
-
-For detailed Cloudflare deployment instructions, see the [Next-on-Pages documentation](https://github.com/cloudflare/next-on-pages/tree/main/packages/next-on-pages).
-
-## 💻 Local Development
-
-### Prerequisites
-- Node.js 18.x or higher
-- npm or yarn package manager
-- A TMDb API key ([register here](https://www.themoviedb.org/signup))
-
-### Setup Instructions
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/lande26/movieko.git
-   cd movieko
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` and add your values:
-   ```env
-   NEXT_PUBLIC_APP_URL=http://localhost:3000
-   NEXT_PUBLIC_TMDB_TOKEN=your_tmdb_api_key_here
-   NEXT_PUBLIC_SITE_NAME=Landemon
-   ```
-
-4. **Start the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-5. **Open your browser**
-   
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-### Build for Production
-
-```bash
-npm run build
-npm run start
+```
+██╗      █████╗ ███╗   ██╗██████╗ ███████╗███╗   ███╗ ██████╗ ███╗   ██╗
+██║     ██╔══██╗████╗  ██║██╔══██╗██╔════╝████╗ ████║██╔═══██╗████╗  ██║
+██║     ███████║██╔██╗ ██║██║  ██║█████╗  ██╔████╔██║██║   ██║██╔██╗ ██║
+██║     ██╔══██║██║╚██╗██║██║  ██║██╔══╝  ██║╚██╔╝██║██║   ██║██║╚██╗██║
+███████╗██║  ██║██║ ╚████║██████╔╝███████╗██║ ╚═╝ ██║╚██████╔╝██║ ╚████║
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 ```
 
-## 🔑 Environment Variables
+**Browse. Stream. Watch Together.**
 
-| Variable | Description | Required | Example |
-|----------|-------------|----------|---------|
-| `NEXT_PUBLIC_APP_URL` | The URL where your app is deployed | Yes | `https://landemon.vercel.app` |
-| `NEXT_PUBLIC_TMDB_TOKEN` | Your TMDb API key for movie data | Yes | `eyJhbGc...` |
-| `NEXT_PUBLIC_SITE_NAME` | Display name for your site | Yes | `Landemon` |
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=flat-square&logo=vercel)](https://lande-mon.vercel.app/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Live](https://img.shields.io/badge/Live-lande--mon.vercel.app-blue?style=flat-square)](https://lande-mon.vercel.app/)
 
-### Getting a TMDb API Key
+<br/>
 
-1. Create a free account at [themoviedb.org](https://www.themoviedb.org/signup)
-2. Go to Settings → API
-3. Request an API key (choose "Developer" option)
-4. Copy your API Read Access Token (v4 auth)
-5. Use this token as `NEXT_PUBLIC_TMDB_TOKEN`
+[**Live Demo**](https://lande-mon.vercel.app/) · [**Report Bug**](https://github.com/lande26/LandeMon/issues) · [**Request Feature**](https://github.com/lande26/LandeMon/issues)
 
-> **Note**: A default token is available in `.env.example` for testing purposes only. For production use, always use your own API key.
+<br/>
 
-## 🛠️ Tech Stack
-
-- **[Next.js 14](https://nextjs.org/)** – React framework with App Router
-- **[TypeScript](https://www.typescriptlang.org/)** – Type-safe JavaScript
-- **[Tailwind CSS](https://tailwindcss.com/)** – Utility-first CSS framework
-- **[TMDb API](https://www.themoviedb.org/)** – Comprehensive movie database
-- **[Vidsrc.cc](https://vidsrc.cc)** – Movie streaming source provider
-- **[Vercel](https://vercel.com/)** – Deployment and hosting platform
-
-## 🤝 Contributing
-
-Contributions are welcome and appreciated! Whether it's bug fixes, feature additions, or documentation improvements, every contribution helps make Landemon better.
-
-### How to Contribute
-
-1. **Fork the repository**
-   
-   Click the "Fork" button at the top right of this page
-
-2. **Clone your fork**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/movieko.git
-   cd movieko
-   ```
-
-3. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   # or
-   git checkout -b fix/bug-fix
-   ```
-
-4. **Make your changes**
-   
-   Write clean, well-documented code following the project's style
-
-5. **Commit your changes**
-   ```bash
-   git add .
-   git commit -m "Add: Amazing new feature"
-   ```
-   
-   Use clear commit messages:
-   - `Add:` for new features
-   - `Fix:` for bug fixes
-   - `Update:` for updates to existing features
-   - `Remove:` for removing features or code
-
-6. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-
-7. **Open a Pull Request**
-   
-   Go to the original repository and click "New Pull Request"
-
-### Development Guidelines
-
-- Follow the existing code style and conventions
-- Write meaningful commit messages
-- Test your changes thoroughly
-- Update documentation if needed
-- Keep PRs focused on a single feature or fix
-
-## 📝 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgements
-
-- **[The Movie Database (TMDb)](https://www.themoviedb.org/)** – For providing comprehensive movie data and images through their excellent API
-- **[Vidsrc.cc](https://vidsrc.cc)** – For reliable movie streaming links and sources
-- **Next.js Team** – For the amazing React framework
-- **Vercel** – For seamless deployment and hosting
-- **All Contributors** – Thank you for your contributions to making Landemon better!
-
-## 📧 Support
-
-If you encounter any issues or have questions:
-
-- Open an [issue on GitHub](https://github.com/lande26/movieko/issues)
-- Check existing issues for solutions
-- Review the documentation
-
-## 🌟 Star Us!
-
-If you find Landemon useful, please consider giving it a star on GitHub! It helps others discover the project.
+</div>
 
 ---
 
-**Built with ❤️ by [lande26](https://github.com/lande26)**
+## What is Landemon?
 
-**Live Demo**: [landemon.vercel.app](https://lande-mon.vercel.app) *(update with your actual URL)*
+Landemon is a distributed streaming platform to browse and stream **500,000+ movies and TV shows** powered by the TMDb API. It's built as a side project — but engineered like it isn't.
+
+The stack is designed around real distributed systems principles: edge caching, serverless connection pooling, WebRTC-based watch parties, and a 6-provider circuit breaker fallback chain for uninterrupted playback. Everything runs at **$0/month**.
+
+---
+
+## Features
+
+- 🎬 &nbsp;**Browse & Stream** — 500,000+ movies and TV shows via TMDb API with ratings, cast, and recommendations
+- 🔐 &nbsp;**Auth** — Google & GitHub OAuth via NextAuth.js with cross-device session persistence
+- 🔖 &nbsp;**Bookmarks & Watch History** — synced to Neon Postgres, accessible on any device
+- ⚡ &nbsp;**Edge-cached responses** — TMDb API calls cached in Upstash Redis, sub-10ms cache hits
+- 🎉 &nbsp;**Watch Party** — invite friends, watch together, video/mic via LiveKit WebRTC
+- 💬 &nbsp;**Real-time Chat** — built into Watch Party via LiveKit Data Channels
+- 📡 &nbsp;**Sync Controls** — host broadcasts play/pause/seek signals to all guests
+- 🔁 &nbsp;**Stream Fallback Chain** — 6 providers with circuit breaker, never breaks mid-watch
+- 🌙 &nbsp;**Dark/Light theme** — clean UI with responsive layout and Tailwind CSS
+
+---
+
+## Architecture
+
+Landemon is split into five distinct layers, each independently scalable:
+
+```
+┌─────────────┐    ┌──────────────────┐    ┌─────────────────────────────────┐
+│   Client    │───▶│   Edge / CDN     │───▶│        Compute (Vercel)         │
+│             │    │                  │    │                                 │
+│  Browser /  │    │ Vercel Edge ISR  │    │  Next.js App Router             │
+│  Next.js    │    │ next/image CDN   │    │  middleware.ts (auth guard)     │
+│             │    │ (WebP cache)     │    │  /api/movies/* (TMDb + cache)   │
+└─────────────┘    └──────────────────┘    │  /api/stream/[tmdbId] (chain)  │
+                                           │  /api/livekit (WebRTC token)   │
+                                           └───────────────┬─────────────────┘
+                                                           │
+                          ┌────────────────────────────────┼─────────────────────┐
+                          │                                │                     │
+                   ┌──────▼──────┐                ┌───────▼──────┐    ┌─────────▼───────┐
+                   │ Data Layer  │                │   LiveKit    │    │ Stream Providers│
+                   │             │                │  (WebRTC)    │    │                 │
+                   │ Neon PG     │                │ video + mic  │    │ vidsrc.cc       │
+                   │ Upstash     │                │ + chat       │    │ vidsrc.to       │
+                   │ Redis       │                └──────────────┘    │ autoembed.cc    │
+                   │ Prisma ORM  │                                    │ smashystream    │
+                   └─────────────┘                                    │ multiembed      │
+                                                                      │ 2embed ↓        │
+                                                                      └─────────────────┘
+```
+
+### Key Design Decisions
+
+| Decision | Why |
+|---|---|
+| Vercel over Cloudflare for hosting | Next.js ISR and App Router work natively with Vercel — no config overhead |
+| Pusher replaced by LiveKit Data Channels | LiveKit handles WebRTC + sync signals + chat in one service |
+| Upstash Redis for caching | Serverless, pay-per-request, globally replicated — no idle cost |
+| Prisma Accelerate for connection pooling | Vercel serverless opens new DB connections per invocation — Accelerate pools them |
+| 6-provider fallback chain | Any single provider can go down — the chain ensures playback never breaks |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Auth | NextAuth.js v5 (Google + GitHub OAuth) |
+| Database | Neon Serverless Postgres |
+| ORM | Prisma + Prisma Accelerate |
+| Cache | Upstash Redis |
+| Watch Party | LiveKit (WebRTC video/mic/chat) |
+| Deployment | Vercel |
+| Movie Data | TMDb API |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- A [TMDb API key](https://www.themoviedb.org/settings/api)
+- A [Neon](https://neon.tech) database
+- An [Upstash Redis](https://upstash.com) instance
+- A [LiveKit Cloud](https://livekit.io/cloud) account (free tier)
+- Google & GitHub OAuth credentials
+
+### Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/lande26/LandeMon.git
+cd LandeMon
+
+# Install dependencies
+npm install
+
+# Copy env file
+cp .env.example .env.local
+```
+
+### Environment Variables
+
+```env
+# TMDb
+NEXT_PUBLIC_TMDB_API_KEY=
+
+# Database
+DATABASE_URL=                    # Prisma Accelerate proxy URL
+DIRECT_URL=                      # Direct Neon connection (for migrations)
+
+# Auth
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# Upstash Redis
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
+# LiveKit
+LIVEKIT_API_KEY=
+LIVEKIT_API_SECRET=
+NEXT_PUBLIC_LIVEKIT_URL=
+```
+
+### Database Setup
+
+```bash
+# Push schema to Neon
+npx prisma migrate dev
+
+# Or for production
+npx prisma migrate deploy
+```
+
+### Run Locally
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Watch Party
+
+Landemon's Watch Party lets you watch anything with friends — with real video and voice, not just a chat box.
+
+**How it works:**
+1. Open any movie or show → click **Start Watch Party**
+2. Share the room link with friends
+3. Everyone joins, approves camera/mic (off by default)
+4. Host broadcasts sync signals — guests get notified to play/pause
+5. Chat, react, and watch together in real time
+
+**Under the hood:**
+- Room state (movie ID, host, metadata) stored in Upstash Redis with 4-hour TTL
+- LiveKit handles all WebRTC peer connections — video, mic, and data channels
+- Sync signals (play/pause/seek) sent via LiveKit Data Channels — no extra service needed
+- Host disconnect detected via LiveKit room events → guests auto-redirected
+
+---
+
+## Stream Fallback Chain
+
+No single streaming provider is 100% reliable. Landemon tries providers in order and falls back automatically:
+
+```
+vidsrc.cc → vidsrc.to → autoembed.cc → smashystream → multiembed.mov → 2embed.cc
+```
+
+Each provider has a 3-second timeout. The last working provider per title is cached in Redis (24hr TTL) so repeat views skip the chain entirely.
+
+---
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── movies/          # TMDb aggregation with Redis caching
+│   │   ├── stream/          # 6-provider fallback chain
+│   │   ├── party/           # Watch Party room management
+│   │   ├── livekit/         # WebRTC token generation
+│   │   ├── bookmark/        # Bookmark CRUD
+│   │   ├── history/         # Watch history tracking
+│   │   └── auth/            # NextAuth handlers
+│   ├── party/[roomId]/      # Watch Party room pages
+│   └── (pages)/             # Home, Browse, Movie detail, etc.
+├── components/
+│   ├── party/               # WatchPartyClient, ParticipantGrid, SyncControls
+│   └── ui/                  # Shared UI components
+├── lib/
+│   ├── cache.ts             # Redis read-through cache utility
+│   ├── party.ts             # Room state management
+│   ├── prisma.ts            # Prisma client singleton
+│   └── pusher.ts            # (legacy, replaced by LiveKit)
+└── prisma/
+    └── schema.prisma        # DB schema
+```
+
+---
+
+## Roadmap
+
+- [x] Browse 500,000+ movies and TV shows
+- [x] Google & GitHub OAuth
+- [x] Bookmarks and watch history (cross-device)
+- [x] Edge-cached TMDb responses
+- [x] 6-provider stream fallback chain
+- [ ] Watch Party with LiveKit WebRTC *(in progress)*
+- [ ] Real-time chat in Watch Party
+- [ ] Host sync controls (play/pause/seek broadcast)
+- [ ] Rate limiting per IP (Upstash Ratelimit)
+- [ ] User reviews and ratings
+- [ ] Cloudflare Worker ad-stripping proxy
+
+---
+
+## Contributing
+
+Pull requests are welcome. For major changes, open an issue first.
+
+```bash
+# Create a feature branch
+git checkout -b feature/your-feature
+
+# Commit changes
+git commit -m "feat: your feature"
+
+# Push and open a PR
+git push origin feature/your-feature
+```
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+Built by [Kartik Lande](https://kartik70.dev) · [kartiklande70@gmail.com](mailto:kartiklande70@gmail.com)
+
+[![Portfolio](https://img.shields.io/badge/Portfolio-kartik70.dev-black?style=flat-square&logo=vercel)](https://kartik70.dev)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-kartik--lande-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/kartik-lande-b2b2b1204/)
+[![GitHub](https://img.shields.io/badge/GitHub-lande26-181717?style=flat-square&logo=github)](https://github.com/lande26)
+
+</div>
