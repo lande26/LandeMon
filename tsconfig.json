@@ -34,5 +34,5 @@
     "src/app/sitemap.xml",
     "src/app/sitemap/[id]"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "ad-proxy-worker"]
 }

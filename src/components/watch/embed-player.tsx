@@ -1,4 +1,4 @@
-// // 'use client';
+'use client';
 // // import React from 'react';
 // // import Loading from '../ui/loading';
 // // import { useRouter } from 'next/navigation';
@@ -150,152 +150,33 @@
 // import React, { useRef, useState, useEffect, useCallback } from 'react';
 // import Loading from '../ui/loading';
 // import { MediaType, type IEpisode, type ISeason, type Show } from '@/types';
-// import MovieService from '@/services/MovieService';
-// import { type AxiosResponse } from 'axios';
-// import Season from '../season';
-
-// interface EmbedPlayerProps {
-//   url: string;
-//   movieId?: string;
-//   mediaType?: MediaType;
-// }
-
-// export default function EmbedPlayer({
-//   url,
-//   movieId,
-//   mediaType,
-// }: EmbedPlayerProps) {
-//   const iframeRef = useRef<HTMLIFrameElement>(null);
-//   const loadingRef = useRef<HTMLDivElement>(null);
-
-//   const [seasons, setSeasons] = useState<ISeason[] | null>(null);
-//   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-//   const setIframeUrl = (newUrl: string) => {
-//     if (!iframeRef.current) return;
-//     iframeRef.current.src = newUrl;
-//     iframeRef.current.style.opacity = '0';
-//     loadingRef.current?.style.setProperty('display', 'flex');
-//   };
-
-//   const onIframeLoad = () => {
-//     if (!iframeRef.current) return;
-//     iframeRef.current.style.opacity = '1';
-//     loadingRef.current?.style.setProperty('display', 'none');
-//   };
-
-//   const loadAnime = useCallback(async (id: string) => {
-//     const numericId = Number(id.replace('t-', ''));
-
-//     const res: AxiosResponse<Show> =
-//       await MovieService.findTvSeries(numericId);
-
-//     if (!res.data?.seasons?.length) return;
-
-//     const validSeasons = res.data.seasons.filter(
-//       (s) => s.season_number,
-//     );
-
-//     const seasonResponses = await Promise.all(
-//       validSeasons.map((s) =>
-//         MovieService.getSeasons(numericId, s.season_number),
-//       ),
-//     );
-
-//     setSeasons(seasonResponses.map((r) => r.data));
-
-//     setIframeUrl(
-//       `https://vidsrc.cc/v2/embed/anime/tmdb${numericId}/1/sub?autoPlay=false`,
-//     );
-//   }, []);
-
-//   const handleAnimeEpisodeChange = (episode: IEpisode) => {
-//     setIframeUrl(
-//       `https://vidsrc.cc/v2/embed/anime/tmdb${episode.show_id}/${episode.episode_number}/sub`,
-//     );
-//   };
-
-//   useEffect(() => {
-//     const iframe = iframeRef.current;
-//     if (!iframe) return;
-
-//     iframe.addEventListener('load', onIframeLoad);
-//     return () => iframe.removeEventListener('load', onIframeLoad);
-//   }, []);
-
-//   useEffect(() => {
-//     if (mediaType === MediaType.ANIME && movieId) {
-//       void loadAnime(movieId);
-//       return;
-//     }
-
-//     if (iframeRef.current) {
-//       iframeRef.current.src = url;
-//       loadingRef.current?.style.setProperty('display', 'flex');
-//     }
-//   }, [mediaType, movieId, url, loadAnime]);
-
-//   return (
-//     <div className="relative flex h-[100dvh] w-full flex-col overflow-hidden bg-black lg:flex-row">
-//       <div className="relative flex min-h-0 w-full flex-1 bg-black">
-//         <div
-//           ref={loadingRef}
-//           className="absolute inset-0 z-10 flex items-center justify-center bg-black">
-//           <Loading />
-//         </div>
-
-//         <iframe
-//           ref={iframeRef}
-//           className="h-full w-full border-none transition-opacity duration-300"
-//           allowFullScreen
-//           referrerPolicy="no-referrer-when-downgrade"
-//           style={{ opacity: 0 }}
-//           {...(mediaType === MediaType.TV
-//             ? { sandbox: 'allow-scripts allow-same-origin' }
-//             : {})}
-//         />
-//       </div>
-
-//       {mediaType === MediaType.ANIME && seasons && (
-//         <div
-//           className={`border-t border-white/10 bg-neutral-900 transition-all duration-300 lg:border-l lg:border-t-0 ${
-//             isSidebarOpen
-//               ? 'h-[40vh] w-full lg:h-full lg:w-80'
-//               : 'h-0 w-0 overflow-hidden'
-//           }`}>
-//           <div className="flex items-center justify-between border-b border-white/10 p-4 text-white">
-//             <span>Episodes</span>
-//             <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-//               Toggle
-//             </button>
-//           </div>
-
-//           <div className="flex-1 overflow-y-auto p-2">
-//             <Season
-//               seasons={seasons}
-//               onChangeEpisode={handleAnimeEpisodeChange}
-//             />
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-'use client';
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import Loading from '../ui/loading';
 import Season from '../season';
 import { MediaType, IEpisode, type ISeason, type Show } from '@/types';
 import MovieService from '@/services/MovieService';
 import { type AxiosResponse } from 'axios';
+import { useRouter } from 'next/navigation';
+import { Users, Loader2, ExternalLink } from 'lucide-react';
+import { trpc } from '@/client/trpc';
 
-interface EmbedPlayerProps {
+export interface EmbedPlayerRef {
+  play: () => void;
+  pause: () => void;
+  seek: (time: number) => void;
+}
+
+export interface EmbedPlayerProps {
   tmdbId: string;
   mediaType: MediaType;
+  roomId?: string;
+  isWatchParty?: boolean;
+  isHost?: boolean;
+  onStateUpdate?: (state: any) => void;
 }
 
 const SERVERS = [
+  { id: 'auto', name: 'Auto (Fastest)' },
   { id: 'vidsrc-cc', name: 'VidSrc CC (Default)' },
   { id: 'vidsrc-xyz', name: 'VidSrc XYZ' },
   { id: 'vidsync', name: 'VidSync' },
@@ -306,17 +187,60 @@ const SERVERS = [
   { id: 'smashystream', name: 'SmashyStream' },
 ];
 
-export default function EmbedPlayer({
+const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
   tmdbId,
   mediaType,
-}: EmbedPlayerProps) {
+  roomId,
+  isWatchParty = false,
+  isHost = false,
+  onStateUpdate,
+}, ref) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  
+  const [selectedServer, setSelectedServer] = useState('auto');
+  const [currentEpisode, setCurrentEpisode] = useState<{s: number; e: number} | null>(null);
+
+  React.useImperativeHandle(ref, () => ({
+    play: () => {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ source: 'landemon-party', action: 'play' }), '*');
+    },
+    pause: () => {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ source: 'landemon-party', action: 'pause' }), '*');
+    },
+    seek: (time: number) => {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ source: 'landemon-party', action: 'seek', time }), '*');
+    },
+    syncSource: (server: string, s?: number, e?: number) => {
+      if (server !== selectedServer || (s && e && (currentEpisode?.s !== s || currentEpisode?.e !== e))) {
+        setSelectedServer(server);
+        if (s && e) setCurrentEpisode({ s, e });
+        updateIframe(server, s, e);
+      }
+    }
+  }));
+
+  React.useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      const data = e.data;
+      if (data?.source === 'landemon-proxy' && onStateUpdate) {
+        onStateUpdate({
+           ...data.state,
+           serverData: { server: selectedServer, s: currentEpisode?.s, e: currentEpisode?.e }
+        });
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onStateUpdate]);
+
   const loadingRef = useRef<HTMLDivElement>(null);
   const [seasons, setSeasons] = useState<ISeason[] | null>(null);
   
-  const [selectedServer, setSelectedServer] = useState('vidsrc-cc');
-  const [currentEpisode, setCurrentEpisode] = useState<{s: number; e: number} | null>(null);
+  const [isCreatingParty, setIsCreatingParty] = useState(false);
   const hasLoaded = useRef(false);
+  const router = useRouter();
+
+  const logHistoryMutation = trpc.history.logHistory.useMutation();
 
   const getEmbedUrl = useCallback((server: string, type: MediaType, id: string, season: number = 1, eps: number = 1) => {
     const isMovie = type === MediaType.MOVIE;
@@ -358,19 +282,54 @@ export default function EmbedPlayer({
     loadingRef.current?.style.setProperty('display', 'none');
   };
 
-  const updateIframe = useCallback((serverKey: string, passedS?: number, passedE?: number) => {
+  const updateIframe = useCallback(async (serverKey: string, passedS?: number, passedE?: number) => {
     const finalS = passedS ?? currentEpisode?.s ?? 1;
     const finalE = passedE ?? currentEpisode?.e ?? 1;
-    const rawUrl = getEmbedUrl(serverKey, mediaType, tmdbId, finalS, finalE);
     
-    // Route the stream through our Cloudflare Ad-Mitigation Proxy layer!
-    const PROXY_URL = process.env.NODE_ENV === "development" 
-      ? "http://localhost:8787" 
-      : "https://lande-mon-ad-proxy.your-cloudflare-username.workers.dev"; // We will update this production URL later!
-      
-    const newUrl = `${PROXY_URL}/?url=${encodeURIComponent(rawUrl)}`;
+    let targetServer = serverKey;
+    const numericId = Number(tmdbId.replace('t-', '').replace('m-', ''));
     
-    setIframeUrl(newUrl);
+    if (serverKey === 'auto') {
+      try {
+        const res = await fetch(`/api/stream?id=${numericId}&type=${mediaType}&season=${finalS}&episode=${finalE}`);
+        if (res.ok) {
+          const data = await res.json();
+          targetServer = data.provider;
+        } else {
+          targetServer = 'vidsrc-cc';
+        }
+      } catch (e) {
+        targetServer = 'vidsrc-cc';
+      }
+    }
+
+    if (serverKey === 'auto') {
+      // Don't override the user's manual dropdown to a static server if they literally clicked 'Auto'
+      // But we still load the targetServer iframe secretly.
+    } else {
+      setSelectedServer(targetServer);
+    }
+
+    const rawUrl = getEmbedUrl(targetServer, mediaType, tmdbId, finalS, finalE);
+    
+    // As per user request: only use the Cloudflare ad-mitigation proxy for vidsrc-cc
+    // Other servers have aggressive domain-locks that break API fetch (CORS) when proxied.
+    if (targetServer === 'vidsrc-cc') {
+      const PROXY_URL = process.env.NODE_ENV === "development" 
+        ? "http://127.0.0.1:8787" 
+        : (process.env.NEXT_PUBLIC_AD_PROXY_URL || "https://lande-mon-ad-proxy.your-cloudflare-username.workers.dev");
+        
+      const newUrl = `${PROXY_URL}/?url=${encodeURIComponent(rawUrl)}`;
+      setIframeUrl(newUrl);
+    } else {
+      setIframeUrl(rawUrl);
+    }
+    
+    logHistoryMutation.mutate({
+      tmdbId: numericId,
+      mediaType: mediaType === MediaType.ANIME ? 'anime' : mediaType === MediaType.MOVIE ? 'movie' : 'tv',
+      progress: 0,
+    });
   }, [mediaType, tmdbId, currentEpisode, getEmbedUrl]);
 
   const handleChangeEpisode = (episode: IEpisode) => {
@@ -435,25 +394,88 @@ export default function EmbedPlayer({
     updateIframe(newServer);
   };
 
-  return (
-    <div className="relative h-[100dvh] w-full bg-black">
+  const handleCreateParty = async () => {
+    setIsCreatingParty(true);
+    try {
+      const showData = seasons?.length ? await MovieService.findTvSeries(Number(tmdbId.replace('t-', '').replace('m-', ''))) : await MovieService.findMovie(Number(tmdbId.replace('t-', '').replace('m-', '')));
+      const title = seasons?.length ? (showData.data as any).name : (showData.data as any).title;
+      const posterPath = (showData.data as any).poster_path || '';
       
-      <div className="absolute top-4 right-4 z-50 flex items-center space-x-2 bg-black/60 p-2 rounded-xl backdrop-blur-md border border-white/10">
-        <span className="text-white text-sm font-medium">Server:</span>
-        <select
-          value={selectedServer}
-          onChange={handleServerChange}
-          className="bg-transparent text-white text-sm font-medium outline-none cursor-pointer px-1"
-        >
-          {SERVERS.map(s => (
-            <option key={s.id} value={s.id} className="bg-neutral-900 text-white">
-              {s.name}
-            </option>
-          ))}
-        </select>
+      const res = await fetch('/api/party/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tmdbId,
+          mediaType,
+          title: title || 'Watch Party',
+          posterPath,
+          season: currentEpisode?.s,
+          episode: currentEpisode?.e,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create party');
+
+      router.push(`/party/${data.roomId}`);
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message || 'Failed to create Watch Party');
+    } finally {
+      setIsCreatingParty(false);
+    }
+  };
+
+  return (
+    <div className={`relative w-full bg-black ${isWatchParty ? 'h-full' : 'h-[100dvh]'}`}>
+      
+      <div className="absolute top-4 right-4 z-50 flex items-center space-x-2">
+        {!isWatchParty && (
+          <button
+            onClick={handleCreateParty}
+            disabled={isCreatingParty}
+            className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+          >
+            {isCreatingParty ? <Loader2 className="h-4 w-4 animate-spin" /> : <Users className="h-4 w-4" />}
+            <span>Watch Party</span>
+          </button>
+        )}
+
+        {isHost && isWatchParty && roomId && (
+          <button 
+             onClick={() => window.open(`/party/${roomId}/theater`, 'TheaterWindow', 'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no')}
+             className="flex items-center space-x-2 bg-primary/20 hover:bg-primary/30 text-white border border-primary/20 px-4 py-2 text-sm font-bold rounded-xl transition-all relative group overflow-hidden"
+             title="Pop-out Theater Window for Screen Sharing"
+          >
+             <div className="absolute inset-0 bg-primary/10 animate-ping opacity-20 pointer-events-none group-hover:hidden" />
+             <ExternalLink className="w-4 h-4" />
+             <span>Theater</span>
+          </button>
+        )}
+
+        <div className="flex items-center space-x-2 bg-black/60 p-2 rounded-xl backdrop-blur-md border border-white/10">
+          <span className="text-white text-sm font-medium hidden sm:inline">Server:</span>
+          {(!isWatchParty || isHost) ? (
+            <select
+              value={selectedServer}
+              onChange={handleServerChange}
+              className="bg-transparent text-white text-sm font-medium outline-none cursor-pointer px-1"
+            >
+              {SERVERS.map(s => (
+                <option key={s.id} value={s.id} className="bg-neutral-900 text-white">
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-white text-sm font-bold px-1">{SERVERS.find(s => s.id === selectedServer)?.name || selectedServer}</span>
+          )}
+        </div>
       </div>
 
-      {seasons && (
+      {seasons && (!isWatchParty || isHost) && (
         <Season seasons={seasons} onChangeEpisode={handleChangeEpisode} />
       )}
 
@@ -465,11 +487,13 @@ export default function EmbedPlayer({
 
       <iframe
         ref={iframeRef}
-        className="h-full w-full border-none transition-opacity duration-300 bg-neutral-900"
+        className="h-full w-full border-none transition-opacity duration-300"
         allowFullScreen
         referrerPolicy="no-referrer-when-downgrade"
-        style={{ opacity: 1 }}
+        style={{ opacity: 0 }}
       />
     </div>
   );
-}
+});
+
+export default EmbedPlayer;

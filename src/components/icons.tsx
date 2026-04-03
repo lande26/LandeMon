@@ -20,6 +20,8 @@ import {
   Clapperboard,
   TrendingUp,
 } from "lucide-react";
+import BookmarkIcon from "@/components/ui/bookmark-icon";
+import ClockIcon from "@/components/ui/clock-icon";
 
 type IconProps = LucideProps;
 
@@ -241,4 +243,6 @@ export const Icons = {
   movie: Film,
   list: Clapperboard,
   trendingUp: TrendingUp,
+  bookmark: BookmarkIcon,
+  history: ClockIcon,
 };

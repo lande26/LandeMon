@@ -1,11 +1,11 @@
-import { Icons } from "@/components/icons";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
-import { siteConfig } from "@/configs/site";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Icons } from '@/components/icons';
+import { Badge } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+import { siteConfig } from '@/configs/site';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
-import { SparklesCore } from "@/components/ui/sparkles";
+import { SparklesCore } from '@/components/ui/sparkles';
 
 export default function Index() {
   return (
@@ -13,62 +13,67 @@ export default function Index() {
       <section
         id="hero"
         aria-labelledby="hero-heading"
-        className="relative flex w-full min-h-[90vh] flex-col items-center justify-center overflow-hidden text-center lg:min-h-screen"
-      >
-        <div className="w-full absolute inset-0 z-0">
+        className="relative flex min-h-[90vh] w-full flex-col items-center justify-center overflow-hidden text-center lg:min-h-screen">
+        <div className="absolute inset-0 z-0 w-full">
           <SparklesCore
             id="tsparticlesfullpage"
             background="transparent"
             minSize={0.6}
             maxSize={1.4}
             particleDensity={100}
-            className="w-full h-full"
+            className="h-full w-full"
             particleColor="#FFFFFF"
             speed={1}
           />
-          <div className="absolute inset-0 w-full h-full bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black_80%)]"></div>
+          <div className="absolute inset-0 h-full w-full bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_0%,black_80%)]"></div>
         </div>
 
-        <div className="relative z-10 container mx-auto flex flex-col items-center gap-6 px-4 pt-20 pb-16">
-          <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-foreground via-foreground to-foreground/60 bg-clip-text text-transparent">
+        <div className="container relative z-10 mx-auto flex flex-col items-center gap-6 px-4 pb-16 pt-20">
+          <h1 className="font-brand bg-gradient-to-r from-foreground via-foreground to-foreground/60 bg-clip-text text-5xl font-extrabold text-transparent sm:text-6xl md:text-7xl lg:text-8xl">
             {siteConfig.name}
           </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl text-foreground/80 font-medium">
+          <p className="text-xl font-medium text-foreground/80 sm:text-2xl md:text-3xl">
             {siteConfig.slogan}
           </p>
-          
-          <p className="max-w-3xl text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Welcome to your personal movie universe. Explore thousands of films, binge the latest releases, and rediscover classics that defined cinema.
+
+          <p className="max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
+            Welcome to your personal movie universe. Explore thousands of films,
+            binge the latest releases, and rediscover classics that defined
+            cinema.
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <Link 
-              href="/home"
-              className="group relative px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:scale-105 transition-transform duration-200 shadow-lg shadow-primary/50 flex items-center justify-center gap-2"
-            >
-              Watch Now
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            
+
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/home"
-              className="px-8 py-4 bg-secondary text-secondary-foreground rounded-lg font-semibold text-lg hover:bg-secondary/80 transition-all duration-200 border border-border"
-            >
+              className="group relative flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-4 text-lg font-semibold text-primary-foreground shadow-lg shadow-primary/50 transition-transform duration-200 hover:scale-105">
+              Watch Now
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Link>
+
+            <Link
+              href="/home"
+              className="rounded-lg border border-border bg-secondary px-8 py-4 text-lg font-semibold text-secondary-foreground transition-all duration-200 hover:bg-secondary/80">
               Browse Library
             </Link>
           </div>
-          
-          <div className="flex flex-wrap justify-center gap-8 sm:gap-12 mt-8 text-muted-foreground">
+
+          <div className="mt-8 flex flex-wrap justify-center gap-8 text-muted-foreground sm:gap-12">
             <div className="flex flex-col items-center">
-              <span className="text-3xl sm:text-4xl font-bold text-foreground">10K+</span>
+              <span className="text-3xl font-bold text-foreground sm:text-4xl">
+                10K+
+              </span>
               <span className="text-sm sm:text-base">Movies</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-3xl sm:text-4xl font-bold text-foreground">4K</span>
+              <span className="text-3xl font-bold text-foreground sm:text-4xl">
+                4K
+              </span>
               <span className="text-sm sm:text-base">Quality</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-3xl sm:text-4xl font-bold text-foreground">24/7</span>
+              <span className="text-3xl font-bold text-foreground sm:text-4xl">
+                24/7
+              </span>
               <span className="text-sm sm:text-base">Streaming</span>
             </div>
           </div>
@@ -77,8 +82,7 @@ export default function Index() {
 
       <section
         id="features"
-        className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24"
-      >
+        className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
             Features
@@ -151,8 +155,7 @@ export default function Index() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1"
-                className="h-12 w-12 fill-current"
-              >
+                className="h-12 w-12 fill-current">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
               </svg>
               <div className="space-y-2">

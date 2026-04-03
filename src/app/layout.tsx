@@ -2,17 +2,16 @@ import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import '@/styles/globals.css';
-// import { TrpcProvider } from '@/client/trpc-provider';
+import { TrpcProvider } from '@/client/trpc-provider';
 import type { Metadata, Viewport } from 'next';
-import { Inter as FontSans } from 'next/font/google';
+import { Inter as FontSans, Playfair_Display } from 'next/font/google';
 import localFont from 'next/font/local';
+import { Toaster } from 'sonner';
 // import { Analytics } from '@/components/analytics';
 import { siteConfig } from '@/configs/site';
 import { env } from '@/env.mjs';
-// import { SpeedInsights } from '@vercel/speed-insights/next';
-import { GoogleAnalytics } from '@next/third-parties/google';
+// import { SpeedInsights } from '@vercelspeed-insights/next';
 import Script from 'next/script';
-
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -24,6 +23,15 @@ const fontSans = FontSans({
 const fontHeading = localFont({
   src: '../assets/fonts/CalSans-SemiBold.woff2',
   variable: '--font-heading',
+});
+
+// Premium brand font for "LandeMon" wordmark — elegant serif display
+const fontBrand = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['700', '800', '900'],
+  style: ['normal', 'italic'],
+  variable: '--font-brand',
+  display: 'swap',
 });
 
 export const viewport: Viewport = {
@@ -82,18 +90,20 @@ export default function RootLayout({
           'overlflow-y-auto min-h-screen overflow-x-hidden bg-background font-sans antialiased',
           fontSans.variable,
           fontHeading.variable,
+          fontBrand.variable,
         )}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          {/* <TrpcProvider> */}
-          {children}
-          <TailwindIndicator />
-          {/* <Analytics />
+          <TrpcProvider>
+            {children}
+            <TailwindIndicator />
+            <Toaster position="top-center" theme="dark" richColors />
+            {/* <Analytics />
           <SpeedInsights /> */}
-          {/* </TrpcProvider> */}
+          </TrpcProvider>
           {env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
             <>
               <Script

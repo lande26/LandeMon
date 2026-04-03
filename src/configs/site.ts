@@ -66,9 +66,16 @@ export const siteConfig = {
       icon: 'list',
     },
     {
-      title: 'New & Popular',
-      href: '/new-and-popular',
-      icon: 'trendingUp',
+      title: 'Bookmarks',
+      href: '/bookmarks',
+      icon: 'bookmark',
+      iconOnly: true,
+    },
+    {
+      title: 'History',
+      href: '/history',
+      icon: 'history',
+      iconOnly: true,
     },
   ],
 };

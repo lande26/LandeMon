@@ -10,6 +10,8 @@ export const env = createEnv({
     NODE_ENV: z.enum(['development', 'test', 'production']),
     UPSTASH_REDIS_REST_URL: z.string().url(),
     UPSTASH_REDIS_REST_TOKEN: z.string(),
+    LIVEKIT_API_KEY: z.string(),
+    LIVEKIT_API_SECRET: z.string(),
   },
 
   /**
@@ -18,6 +20,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_LIVEKIT_URL: z.string().url(),
     NEXT_PUBLIC_APP_URL: z.string().url(),
     NEXT_PUBLIC_TMDB_TOKEN: z.string(),
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: z.string().optional(),
@@ -27,6 +30,7 @@ export const env = createEnv({
     NEXT_PUBLIC_INSTAGRAM: z.string().url().optional(),
     NEXT_PUBLIC_YOUTUBE: z.string().url().optional(),
     NEXT_PUBLIC_IMAGE_DOMAIN: z.string().optional(),
+    NEXT_PUBLIC_AD_PROXY_URL: z.string().url().optional(),
   },
 
   /**
@@ -38,12 +42,16 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+    LIVEKIT_API_KEY: process.env.LIVEKIT_API_KEY,
+    LIVEKIT_API_SECRET: process.env.LIVEKIT_API_SECRET,
+    NEXT_PUBLIC_LIVEKIT_URL: process.env.NEXT_PUBLIC_LIVEKIT_URL,
     NEXT_PUBLIC_TMDB_TOKEN: process.env.NEXT_PUBLIC_TMDB_TOKEN,
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID:
       process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID,
     NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME,
     NEXT_PUBLIC_TWITTER: process.env.NEXT_PUBLIC_TWITTER ?? 'https://x.com/KartikLande15',
     NEXT_PUBLIC_IMAGE_DOMAIN: process.env.NEXT_PUBLIC_IMAGE_DOMAIN,
+    NEXT_PUBLIC_AD_PROXY_URL: process.env.NEXT_PUBLIC_AD_PROXY_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

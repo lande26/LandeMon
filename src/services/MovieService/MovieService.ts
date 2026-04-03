@@ -225,6 +225,11 @@ const requestTypesNeedUpdateMediaType = [
   RequestType.POPULAR,
   RequestType.GENRE,
   RequestType.KOREAN,
+  RequestType.ANIME_LATEST,
+  RequestType.ANIME_TRENDING,
+  RequestType.ANIME_TOP_RATED,
+  RequestType.ANIME_NETFLIX,
+  RequestType.ANIME_GENRE,
 ];
 const baseUrl = 'https://api.tmdb.org/3';
 

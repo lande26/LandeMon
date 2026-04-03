@@ -19,6 +19,7 @@ export type NavItem = {
   disabled?: boolean;
   external?: boolean;
   icon?: string;
+  iconOnly?: boolean;
   onClick?: () => void;
 };
 

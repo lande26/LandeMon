@@ -1,0 +1,6 @@
+node_modules/
+ad-proxy-worker/
+src/generated/prisma/
+.next/
+out/
+build/

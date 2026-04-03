@@ -26,6 +26,7 @@ import { ModeToggle as ThemeToggle } from '@/components/theme-toggle';
 import { DebouncedInput } from '@/components/debounced-input';
 import MovieService from '@/services/MovieService';
 import { AnimeNavBar } from '@/components/ui/anime-navbar';
+import { Popcorn } from 'lucide-react';
 
 interface MainNavProps {
   items?: NavItem[];
@@ -44,6 +45,24 @@ export function MainNav({ items, children }: MainNavProps) {
   const router = useRouter();
   const searchStore = useSearchStore();
   const [isScrolled, setIsScrolled] = React.useState(false);
+
+  // Track the previous path so we only clear search on genuine route changes,
+  // never on the initial mount (which would immediately kill inline search results).
+  const prevPathRef = React.useRef<string>(path);
+
+  React.useEffect(() => {
+    const previousPath = prevPathRef.current;
+    prevPathRef.current = path;
+
+    // Only act when the path has actually changed from the previous value
+    if (previousPath !== path && !path.includes('/search')) {
+      if (searchStore.isOpen || searchStore.query.length > 0) {
+        searchStore.reset();
+        searchStore.setOpen(false);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path]);
 
   React.useEffect(() => {
     window.addEventListener('popstate', handlePopstateEvent, false);
@@ -122,19 +141,27 @@ export function MainNav({ items, children }: MainNavProps) {
   return (
     <>
       <AnimeNavBar
-        items={items?.map((item) => ({
-          name: item.title,
-          icon: (Icons as any)[item.icon || 'logo'],
-          url: item.href || '#',
-        })) || []}
+        items={
+          items?.map((item) => ({
+            name: item.title,
+            icon: (Icons as any)[item.icon || 'logo'],
+            url: item.href || '#',
+            iconOnly: item.iconOnly,
+          })) || []
+        }
         defaultActive="Home"
         leftNode={
           <Link
             href="/"
             className="flex items-center space-x-2 transition-transform hover:scale-105"
             onClick={() => handleChangeStatusOpen(false)}>
-            <Icons.logo className="h-7 w-7 text-primary drop-shadow-md" aria-hidden="true" />
-            <span className="hidden lg:inline-block font-black text-xl tracking-tight text-foreground drop-shadow-md">{siteConfig.name}</span>
+            <Icons.logo
+              className="h-7 w-7 text-primary drop-shadow-md"
+              aria-hidden="true"
+            />
+            <span className="font-brand hidden text-xl font-bold tracking-wide text-foreground drop-shadow-md lg:inline-block">
+              {siteConfig.name}
+            </span>
           </Link>
         }
         mobileMenuNode={
@@ -149,7 +176,7 @@ export function MainNav({ items, children }: MainNavProps) {
             <DropdownMenuContent
               align="start"
               sideOffset={22}
-              className="w-52 overflow-y-auto overflow-x-hidden rounded-xl border border-border/50 bg-background/95 backdrop-blur-md shadow-2xl">
+              className="w-52 overflow-y-auto overflow-x-hidden rounded-xl border border-border/50 bg-background/95 shadow-2xl backdrop-blur-md">
               <DropdownMenuLabel>
                 <Link
                   href="/"
@@ -163,7 +190,7 @@ export function MainNav({ items, children }: MainNavProps) {
                 <DropdownMenuItem
                   key={index}
                   asChild
-                  className="items-center justify-center cursor-pointer">
+                  className="cursor-pointer items-center justify-center">
                   {item.href && (
                     <Link
                       href={item.href}
@@ -171,7 +198,9 @@ export function MainNav({ items, children }: MainNavProps) {
                       <span
                         className={cn(
                           'line-clamp-1 text-sm font-medium transition-colors hover:text-primary',
-                          path === item.href ? 'text-primary font-bold' : 'text-foreground/70',
+                          path === item.href
+                            ? 'font-bold text-primary'
+                            : 'text-foreground/70',
                         )}>
                         {item.title}
                       </span>
@@ -183,7 +212,22 @@ export function MainNav({ items, children }: MainNavProps) {
           </DropdownMenu>
         }
         rightNode={
-          <div className="relative z-10 flex items-center gap-2 sm:gap-4">
+          <div className="relative z-10 flex items-center gap-1 sm:gap-1.5">
+            <div className="group/wparty relative">
+              <Link href="/party">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary">
+                  <Popcorn size={17} strokeWidth={2} />
+                </Button>
+              </Link>
+              <div className="pointer-events-none absolute -bottom-7 left-1/2 z-50 -translate-x-1/2 translate-y-1 opacity-0 transition-all duration-150 ease-out group-hover/wparty:translate-y-0 group-hover/wparty:opacity-100">
+                <span className="whitespace-nowrap rounded-full border border-border/40 bg-secondary/95 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-foreground/80 shadow-sm backdrop-blur-sm">
+                  Watch Party
+                </span>
+              </div>
+            </div>
             <DebouncedInput
               id="search-input"
               open={searchStore.isOpen}
@@ -192,10 +236,10 @@ export function MainNav({ items, children }: MainNavProps) {
               onChangeStatusOpen={handleChangeStatusOpen}
               containerClassName={cn(path === '/' ? 'hidden' : 'flex')}
             />
-            <div className="hover:scale-110 transition-transform">
+            <div className="transition-transform hover:scale-110">
               <ThemeToggle />
             </div>
-            <div className="flex items-center pl-1 sm:pl-2 border-l border-white/10 ml-1 sm:ml-2">
+            <div className="ml-1 flex items-center border-l border-border/50 pl-1">
               {children}
             </div>
           </div>

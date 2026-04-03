@@ -1,10 +1,8 @@
-import { motion } from 'framer-motion';
+'use client';
 
+import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
-import { itemFade, itemsReveal } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { useSearchStore } from '@/stores/search';
-import CustomImage from './custom-image';
 
 interface ShowsSkeletonProps {
   count?: number;
@@ -12,66 +10,76 @@ interface ShowsSkeletonProps {
   variant?: 'with-title' | 'without-title';
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.04,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.2, ease: 'easeOut' },
+  },
+};
+
 const ShowsSkeleton = ({
-  count = 6,
+  count = 12,
   classname = '',
   variant = 'with-title',
 }: ShowsSkeletonProps) => {
-  const searchStore = useSearchStore();
+  if (variant === 'without-title') {
+    return (
+      <motion.div
+        className="no-scrollbar container mx-0 flex w-full items-center gap-3 overflow-x-auto overflow-y-hidden py-2"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}>
+        {Array.from({ length: count }, (_, i) => (
+          <motion.div key={i} variants={cardVariants} className="flex-shrink-0">
+            <Skeleton className="aspect-[2/3] min-w-[10rem] rounded-lg bg-secondary" />
+          </motion.div>
+        ))}
+      </motion.div>
+    );
+  }
 
   return (
-    <>
-      {variant === 'with-title' ? (
-        <div
-          className={cn(
-            'no-scrollbar container mx-0 w-full max-w-[100%] overflow-x-auto overflow-y-hidden',
-            classname,
-          )}>
-          <Skeleton className="h-[1.62rem] w-28 rounded bg-neutral-700" />
-          <div
-            className={cn(
-              'xxs:grid-cols-2 xxs:gap-x-1.5 xxs:gap-y-5 mt-2.5 grid w-fit gap-y-3.5 xs:grid-cols-3 xs:gap-y-7 sm:grid-cols-3 sm:gap-y-10 md:grid-cols-4 md:gap-y-12 lg:gap-y-14 xl:grid-cols-6 xl:gap-y-16',
-              searchStore.query && 'max-sm:grid-cols-3 max-[375px]:grid-cols-2',
-            )}
-            // initial="hidden"
-            // animate="visible"
-            // variants={itemsReveal}>
-          >
-            {Array.from({ length: count }, (_, i) => (
-              <motion.div key={i} variants={itemFade}>
-                {/* <picture className="relative aspect-[2/3] md:aspect-video"> */}
-                <picture className="relative aspect-[2/3]">
-                  {/* <source */}
-                  {/*   media="(min-width: 780px)" */}
-                  {/*   srcSet={'/images/grey-thumbnail.jpg'} */}
-                  {/* /> */}
-                  <CustomImage
-                    alt={'poster'}
-                    src={'/images/grey-thumbnail.jpg'}
-                    fill={true}
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 33vw"
-                    className="h-full w-full cursor-pointer rounded-lg px-1 transition-all md:hover:scale-110"
-                    style={{ objectFit: 'cover' }}
-                  />
-                </picture>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <motion.div
-          className="no-scrollbar container mx-0 flex w-full items-center gap-1.5 overflow-x-auto overflow-y-hidden"
-          initial="hidden"
-          animate="visible"
-          variants={itemsReveal}>
-          {Array.from({ length: count }, (_, i) => (
-            <motion.div key={i} variants={itemFade}>
-              <Skeleton className="aspect-[2/3] min-w-[15rem] rounded bg-neutral-700" />
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
-    </>
+    <div
+      className={cn(
+        'no-scrollbar container mx-0 w-full max-w-[100%] overflow-x-auto overflow-y-hidden',
+        classname,
+      )}>
+      {/* Section title skeleton */}
+      <Skeleton className="mb-3 h-[1.4rem] w-32 rounded-md bg-secondary" />
+
+      {/* Grid of poster skeletons */}
+      <motion.div
+        className={cn(
+          'grid gap-x-2 gap-y-4',
+          'grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6',
+          'xs:gap-y-5 sm:gap-y-6 md:gap-y-8',
+        )}
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}>
+        {Array.from({ length: count }, (_, i) => (
+          <motion.div key={i} variants={cardVariants}>
+            <div className="flex flex-col gap-2">
+              {/* Poster */}
+              <Skeleton className="aspect-[2/3] w-full rounded-lg bg-secondary" />
+              {/* Optional title line below poster */}
+              <Skeleton className="h-3 w-3/4 rounded bg-secondary/70" />
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 };
 

@@ -25,7 +25,7 @@ const ShowsGrid = ({ shows, query }: SearchedShowsProps) => {
       {modalStore.open && <ShowModal />}
       <div className="main-view mt-4 min-h-[800px] pt-[5%]" id="main-view">
         {query && searchStore.loading ? (
-          <ShowsSkeleton classname="pl-0" />
+          <ShowsSkeleton classname="pl-0" count={12} />
         ) : query && !shows?.length ? (
           <div className="text-center">
             <div className="inline-block text-left text-sm">

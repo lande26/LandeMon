@@ -3,7 +3,7 @@ import { env } from '@/env.mjs';
 
 // Lazily instantiate Redis. This prevents Client Components from crashing 
 // if they accidentally import this module, as T3 Env strictly blocks browser access.
-let redis: Redis | null = null;
+export let redis: Redis | null = null;
 
 if (typeof window === 'undefined') {
   redis = new Redis({

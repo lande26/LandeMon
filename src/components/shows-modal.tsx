@@ -11,6 +11,7 @@ import {
 import { getMobileDetect, getYear } from '@/lib/utils';
 import MovieService from '@/services/MovieService';
 import { useModalStore } from '@/stores/modal';
+import { trpc } from '@/client/trpc';
 import {
   type KeyWord,
   MediaType,
@@ -71,8 +72,70 @@ const ShowModal = () => {
   const [options, setOptions] =
     React.useState<Record<string, object>>(defaultOptions);
 
-  const youtubeRef = React.useRef(null);
+  // refs
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const imageRef = React.useRef<HTMLImageElement>(null);
+  const youtubeRef = React.useRef<YouTubePlayer>(null);
+
+  // Stable key for DB lookups — never depends on async isAnime state.
+  // Using show.media_type directly ('movie' | 'tv') ensures the same key
+  // is used whether the modal opened before or after keywords were fetched.
+  const bookmarkMediaType =
+    modalStore.show?.media_type === MediaType.MOVIE ? 'movie' : 'tv';
+
+  const utils = trpc.useUtils();
+
+  const isBookmarkedQuery = trpc.bookmark.isBookmarked.useQuery(
+    { tmdbId: modalStore.show?.id ?? 0, mediaType: bookmarkMediaType },
+    { enabled: !!modalStore.show?.id, retry: false },
+  );
+
+  const addBookmarkMutation = trpc.bookmark.addBookmark.useMutation({
+    onMutate: async (variables) => {
+      await utils.bookmark.isBookmarked.cancel(variables);
+      const prev = utils.bookmark.isBookmarked.getData(variables);
+      utils.bookmark.isBookmarked.setData(variables, true);
+      return { prev };
+    },
+    onError: (_err, variables, context) => {
+      utils.bookmark.isBookmarked.setData(variables, context?.prev ?? false);
+    },
+    onSettled: (_data, _err, variables) => {
+      void utils.bookmark.isBookmarked.invalidate(variables);
+    },
+  });
+
+  const removeBookmarkMutation = trpc.bookmark.removeBookmark.useMutation({
+    onMutate: async (variables) => {
+      await utils.bookmark.isBookmarked.cancel(variables);
+      const prev = utils.bookmark.isBookmarked.getData(variables);
+      utils.bookmark.isBookmarked.setData(variables, false);
+      return { prev };
+    },
+    onError: (_err, variables, context) => {
+      utils.bookmark.isBookmarked.setData(variables, context?.prev ?? true);
+    },
+    onSettled: (_data, _err, variables) => {
+      void utils.bookmark.isBookmarked.invalidate(variables);
+    },
+  });
+
+  const isBookmarked = isBookmarkedQuery.data ?? false;
+  const isBookmarkPending =
+    addBookmarkMutation.isLoading || removeBookmarkMutation.isLoading;
+
+  const handleBookmarkToggle = () => {
+    if (!modalStore.show?.id || isBookmarkPending) return;
+    const payload = {
+      tmdbId: modalStore.show.id,
+      mediaType: bookmarkMediaType,
+    };
+    if (isBookmarked) {
+      removeBookmarkMutation.mutate(payload);
+    } else {
+      addBookmarkMutation.mutate(payload);
+    }
+  };
 
   // get trailer and genres of show
   React.useEffect(() => {
@@ -96,29 +159,32 @@ const ShowModal = () => {
     if (!id || !type) {
       return;
     }
-    const data: ShowWithGenreAndVideo = await MovieService.findMovieByIdAndType(
-      id,
-      type,
-    );
 
-    const keywords: KeyWord[] =
-      data?.keywords?.results || data?.keywords?.keywords;
+    try {
+      const data: ShowWithGenreAndVideo =
+        await MovieService.findMovieByIdAndType(id, type);
 
-    if (keywords?.length) {
-      setIsAnime(
-        !!keywords.find((keyword: KeyWord) => keyword.name === 'anime'),
-      );
-    }
+      const keywords: KeyWord[] =
+        data?.keywords?.results || data?.keywords?.keywords;
 
-    if (data?.genres) {
-      setGenres(data.genres);
-    }
-    if (data.videos?.results?.length) {
-      const videoData: VideoResult[] = data.videos?.results;
-      const result: VideoResult | undefined = videoData.find(
-        (item: VideoResult) => item.type === 'Trailer',
-      );
-      if (result?.key) setTrailer(result.key);
+      if (keywords?.length) {
+        setIsAnime(
+          !!keywords.find((keyword: KeyWord) => keyword.name === 'anime'),
+        );
+      }
+
+      if (data?.genres) {
+        setGenres(data.genres);
+      }
+      if (data.videos?.results?.length) {
+        const videoData: VideoResult[] = data.videos?.results;
+        const result: VideoResult | undefined = videoData.find(
+          (item: VideoResult) => item.type === 'Trailer',
+        );
+        if (result?.key) setTrailer(result.key);
+      }
+    } catch (error) {
+      console.error('Failed to get show data:', error);
     }
   };
 
@@ -165,8 +231,8 @@ const ShowModal = () => {
     const type = isAnime
       ? 'anime'
       : modalStore.show?.media_type === MediaType.MOVIE
-      ? 'movie'
-      : 'tv';
+        ? 'movie'
+        : 'tv';
     let id = `${modalStore.show?.id}`;
     if (isAnime) {
       const prefix: string =
@@ -228,6 +294,21 @@ const ShowModal = () => {
                   </>
                 </Button>
               </Link>
+              <Button
+                aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                variant="outline"
+                disabled={isBookmarkPending}
+                className="group h-auto rounded border-slate-400 bg-neutral-800 py-1.5 opacity-80 hover:bg-neutral-800 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-neutral-800 dark:hover:bg-neutral-800"
+                onClick={handleBookmarkToggle}>
+                <Icons.bookmark
+                  className={`h-6 w-6 transition-all duration-200 ${
+                    isBookmarked
+                      ? 'fill-current text-white'
+                      : 'fill-transparent text-slate-400'
+                  }`}
+                  aria-hidden="true"
+                />
+              </Button>
             </div>
             <Button
               aria-label={`${isMuted ? 'Unmute' : 'Mute'} video`}
