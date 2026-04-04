@@ -199,13 +199,13 @@
 
 // src/services/MovieService/MovieService.ts
 import { getNameFromShow, getSlug } from '@/lib/utils';
-import type {
-  CategorizedShows,
-  ISeason,
-  KeyWordResponse,
+import {
+  type CategorizedShows,
+  type ISeason,
+  type KeyWordResponse,
   MediaType,
-  Show,
-  ShowWithGenreAndVideo,
+  type Show,
+  type ShowWithGenreAndVideo,
 } from '@/types';
 import { type AxiosResponse } from 'axios';
 import BaseService from '../BaseService/BaseService';
@@ -313,15 +313,15 @@ class MovieService extends BaseService {
     switch (req.requestType) {
       case RequestType.ANIME_LATEST:
         return `/discover/${req.mediaType}?with_keywords=210024%2C&language=en-US&sort_by=primary_release_date.desc&${
-          req.mediaType === 'movie' ? 'release_date' : 'air_date'
+          req.mediaType === MediaType.MOVIE ? 'release_date' : 'air_date'
         }.lte=2024-11-10&with_runtime.gte=1`;
       case RequestType.ANIME_TRENDING:
         return `/discover/${req.mediaType}?with_keywords=210024%2C&language=en-US&sort_by=popularity.desc&${
-          req.mediaType === 'movie' ? 'release_date' : 'air_date'
+          req.mediaType === MediaType.MOVIE ? 'release_date' : 'air_date'
         }.lte=2024-11-10&with_runtime.gte=1`;
       case RequestType.ANIME_TOP_RATED:
         return `/discover/${req.mediaType}?with_keywords=210024%2C&language=en-US&sort_by=vote_count.desc&${
-          req.mediaType === 'movie' ? 'release_date' : 'air_date'
+          req.mediaType === MediaType.MOVIE ? 'release_date' : 'air_date'
         }.lte=2024-11-10`;
       case RequestType.ANIME_NETFLIX:
         return `/discover/${req.mediaType}?with_keywords=210024%2C&with_networks=213&language=en-US`;

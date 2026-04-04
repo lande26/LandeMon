@@ -22,19 +22,11 @@ export default function PartyLobbyPage() {
     }
   }, [status, router]);
 
-  if (status === 'loading' || status === 'unauthenticated') {
-    return (
-      <div className="min-h-[100dvh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
   useEffect(() => {
     async function fetchParties() {
       try {
         const res = await fetch('/api/party/list');
-        const data = await res.json();
+        const data = (await res.json()) as { parties: any[] };
         setParties(data.parties || []);
       } catch (e) {
         console.error(e);
@@ -42,8 +34,18 @@ export default function PartyLobbyPage() {
         setLoading(false);
       }
     }
-    fetchParties();
-  }, []);
+    if (status === 'authenticated') {
+      void fetchParties();
+    }
+  }, [status]);
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   const handleJoinByCode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,7 +121,9 @@ export default function PartyLobbyPage() {
           <div className="text-center py-20 flex flex-col items-center justify-center">
             <Users className="w-12 h-12 text-neutral-600 mb-4" />
             <h3 className="text-xl font-bold text-neutral-300 mb-2">No active parties found</h3>
-            <p className="text-neutral-500 mb-6">Be the first to start a watch party today!</p>
+            <div className="mt-4 text-center text-neutral-500 mb-6">
+              <p>You haven't watched any shows yet. Be the first to start a watch party today!</p>
+            </div>
             <Link
               href="/"
               className="bg-primary/20 hover:bg-primary/30 text-primary-foreground px-6 py-3 rounded-full font-semibold transition-colors border border-primary/20"

@@ -155,11 +155,10 @@ const Hero = ({ randomShow }: HeroProps) => {
     <section aria-label="Hero" className="w-full">
       {randomShow && (
         <>
-          <div className="absolute inset-0 z-0 h-[135vw] w-full sm:h-[56.25vw]">
+          <div className="absolute inset-0 z-0 h-[145vw] w-full sm:h-[60vw]">
             <CustomImage
-              src={`https://image.tmdb.org/t/p/original${
-                randomShow?.backdrop_path ?? randomShow?.poster_path ?? ''
-              }`}
+              src={`https://image.tmdb.org/t/p/original${randomShow?.backdrop_path ?? randomShow?.poster_path ?? ''
+                }`}
               alt={randomShow?.title ?? 'poster'}
               className="-z-40 h-auto w-full object-cover"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 33vw"
@@ -227,11 +226,10 @@ const Hero = ({ randomShow }: HeroProps) => {
                     className="h-auto flex-shrink-0 gap-2 rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={handleBookmarkToggle}>
                     <Icons.bookmark
-                      className={`h-5 w-5 transition-all duration-200 ${
-                        isBookmarked
-                          ? 'fill-current text-white'
-                          : 'fill-transparent text-slate-400'
-                      }`}
+                      className={`h-5 w-5 transition-all duration-200 ${isBookmarked
+                        ? 'fill-current text-white'
+                        : 'fill-transparent text-slate-400'
+                        }`}
                     />
                   </Button>
 

@@ -14,7 +14,7 @@ export const historyRouter = router({
       return ctx.prisma.watchHistory.upsert({
         where: {
           userId_tmdbId_mediaType: {
-            userId: ctx.session.user.id as string,
+            userId: ctx.session.user.id,
             tmdbId: input.tmdbId,
             mediaType: input.mediaType,
           },
@@ -24,7 +24,7 @@ export const historyRouter = router({
           watchedAt: new Date(),
         },
         create: {
-          userId: ctx.session.user.id as string,
+          userId: ctx.session.user.id,
           tmdbId: input.tmdbId,
           mediaType: input.mediaType,
           progress: input.progress,
@@ -34,7 +34,7 @@ export const historyRouter = router({
 
   getUserHistory: protectedProcedure.query(async ({ ctx }) => {
     return ctx.prisma.watchHistory.findMany({
-      where: { userId: ctx.session.user.id as string },
+      where: { userId: ctx.session.user.id },
       orderBy: { watchedAt: "desc" },
     });
   }),

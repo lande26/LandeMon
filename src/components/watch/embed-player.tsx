@@ -438,7 +438,7 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
       <div className="absolute top-4 right-4 z-50 flex items-center space-x-2">
         {!isWatchParty && (
           <button
-            onClick={handleCreateParty}
+            onClick={() => { void handleCreateParty(); }}
             disabled={isCreatingParty}
             className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
           >
@@ -474,7 +474,7 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
               ))}
             </select>
           ) : (
-            <span className="text-white text-sm font-bold px-1">{SERVERS.find(s => s.id === selectedServer)?.name || selectedServer}</span>
+            <span className="text-white text-sm font-bold px-1">{SERVERS.find(s => s.id === selectedServer)?.name ?? selectedServer}</span>
           )}
         </div>
       </div>

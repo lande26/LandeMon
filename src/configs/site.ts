@@ -3,7 +3,6 @@
 // import { productCategories } from "@/config/products"
 // import { slugify } from "@/lib/utils"
 
-import { Icons } from '@/components/icons';
 import { env } from '@/env.mjs';
 
 export type SiteConfig = typeof siteConfig;

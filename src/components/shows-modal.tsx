@@ -65,7 +65,6 @@ const ShowModal = () => {
   const IS_MOBILE: boolean = isMobile();
 
   const [trailer, setTrailer] = React.useState('');
-  const [isPlaying, setPlaying] = React.useState(true);
   const [genres, setGenres] = React.useState<Genre[]>([]);
   const [isAnime, setIsAnime] = React.useState<boolean>(false);
   const [isMuted, setIsMuted] = React.useState<boolean>(
@@ -75,7 +74,6 @@ const ShowModal = () => {
     React.useState<Record<string, object>>(defaultOptions);
 
   // refs
-  const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const imageRef = React.useRef<HTMLImageElement>(null);
   const youtubeRef = React.useRef<YouTubePlayer>(null);
 
@@ -146,7 +144,6 @@ const ShowModal = () => {
     }
   };
 
-  // get trailer and genres of show
   React.useEffect(() => {
     if (modalStore.firstLoad || IS_MOBILE) {
       setOptions((state: Record<string, object>) => ({
@@ -155,11 +152,12 @@ const ShowModal = () => {
       }));
     }
     void handleGetData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
     setIsAnime(false);
-  }, [modalStore]);
+  }, [modalStore.open, modalStore.show?.id]);
 
   const handleGetData = async () => {
     const id: number | undefined = modalStore.show?.id;
@@ -292,7 +290,7 @@ const ShowModal = () => {
             <div className="flex items-center gap-2.5">
               <Link href={handleHref()}>
                 <Button
-                  aria-label={`${isPlaying ? 'Pause' : 'Play'} show`}
+                  aria-label="Play show"
                   className="group h-auto rounded py-1.5">
                   <>
                     <Icons.play

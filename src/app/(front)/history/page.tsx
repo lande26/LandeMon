@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/auth';
 import { redirect } from 'next/navigation';
 import MovieService from '@/services/MovieService';
-import { type Show, MediaType } from '@/types';
+import { type Show } from '@/types';
 import ShowsGrid from '@/components/shows-grid';
 import { siteConfig } from '@/configs/site';
 
@@ -53,7 +53,7 @@ export default async function HistoryPage() {
         <ShowsGrid shows={shows} />
       ) : (
         <div className="mt-12 text-center text-slate-400">
-          <p>You haven't watched any shows yet.</p>
+          <p>You haven&apos;t watched any shows yet.</p>
         </div>
       )}
     </div>
