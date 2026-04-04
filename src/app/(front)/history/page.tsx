@@ -15,7 +15,7 @@ export default async function HistoryPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect('/home');
+    redirect('/home?auth=true&callbackUrl=/history');
   }
 
   const historyLogs = await prisma.watchHistory.findMany({

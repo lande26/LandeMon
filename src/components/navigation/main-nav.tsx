@@ -40,7 +40,12 @@ interface SearchResult {
   hideOnScroll?: boolean;
 }
 
+import { useSession } from 'next-auth/react';
+import { useAuthModal } from '@/stores/auth-modal';
+
 export function MainNav({ items, children }: MainNavProps) {
+  const { data: session } = useSession();
+  const authModal = useAuthModal();
   const path = usePathname();
   const router = useRouter();
   const searchStore = useSearchStore();
@@ -64,14 +69,7 @@ export function MainNav({ items, children }: MainNavProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
-  React.useEffect(() => {
-    window.addEventListener('popstate', handlePopstateEvent, false);
-    return () => {
-      window.removeEventListener('popstate', handlePopstateEvent, false);
-    };
-  }, []);
-
-  const handlePopstateEvent = () => {
+  const handlePopstateEvent = React.useCallback(() => {
     const pathname = window.location.pathname;
     const search: string = getSearchValue('q');
 
@@ -97,7 +95,12 @@ export function MainNav({ items, children }: MainNavProps) {
         })
         .finally(() => searchStore.setLoading(false));
     }
-  };
+  }, [searchStore]);
+
+  React.useEffect(() => {
+    window.addEventListener('popstate', handlePopstateEvent);
+    return () => window.removeEventListener('popstate', handlePopstateEvent);
+  }, [handlePopstateEvent]);
 
   async function searchShowsByQuery(value: string) {
     if (!value?.trim()?.length) {
@@ -142,12 +145,16 @@ export function MainNav({ items, children }: MainNavProps) {
     <>
       <AnimeNavBar
         items={
-          items?.map((item) => ({
+          items?.map((item: any) => ({
             name: item.title,
-            icon: (Icons as any)[item.icon || 'logo'],
-            url: item.href || '#',
+            icon: (Icons as Record<string, any>)[item.icon ?? 'logo'],
+            url: item.href ?? '#',
             iconOnly: item.iconOnly,
-          })) || []
+            requiresAuth: 
+              item.title === 'Bookmarks' || 
+              item.title === 'History' || 
+              item.title === 'Watch Party',
+          })) ?? []
         }
         defaultActive="Home"
         leftNode={
@@ -186,35 +193,63 @@ export function MainNav({ items, children }: MainNavProps) {
                 </Link>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {items?.map((item, index) => (
-                <DropdownMenuItem
-                  key={index}
-                  asChild
-                  className="cursor-pointer items-center justify-center">
-                  {item.href && (
-                    <Link
-                      href={item.href}
-                      onClick={() => handleChangeStatusOpen(false)}>
-                      <span
-                        className={cn(
-                          'line-clamp-1 text-sm font-medium transition-colors hover:text-primary',
-                          path === item.href
-                            ? 'font-bold text-primary'
-                            : 'text-foreground/70',
-                        )}>
-                        {item.title}
-                      </span>
-                    </Link>
-                  )}
-                </DropdownMenuItem>
-              ))}
+              {items?.map((item, index) => {
+                const requiresAuth = 
+                  item.title === 'Bookmarks' || 
+                  item.title === 'History' || 
+                  item.title === 'Watch Party';
+                return (
+                  <DropdownMenuItem
+                    key={index}
+                    onClick={(e) => {
+                      if (requiresAuth && !session) {
+                        e.preventDefault();
+                        authModal.onOpen();
+                      } else {
+                        handleChangeStatusOpen(false);
+                      }
+                    }}
+                    asChild
+                    className="cursor-pointer items-center justify-center">
+                    {item.href && (
+                      <Link 
+                        href={requiresAuth && !session ? '#' : item.href}
+                        onClick={(e) => {
+                          if (requiresAuth && !session) {
+                            e.preventDefault();
+                            authModal.onOpen();
+                          }
+                        }}
+                      >
+                        <span
+                          className={cn(
+                            'line-clamp-1 text-sm font-medium transition-colors hover:text-primary',
+                            path === item.href
+                              ? 'font-bold text-primary'
+                              : 'text-foreground/70',
+                          )}>
+                          {item.title}
+                        </span>
+                      </Link>
+                    )}
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuContent>
           </DropdownMenu>
         }
         rightNode={
           <div className="relative z-10 flex items-center gap-1 sm:gap-1.5">
             <div className="group/wparty relative">
-              <Link href="/party">
+              <Link 
+                href={!session ? "#" : "/party"} 
+                onClick={(e) => {
+                  if (!session) {
+                    e.preventDefault();
+                    authModal.onOpen();
+                  }
+                }}
+              >
                 <Button
                   variant="ghost"
                   size="icon"

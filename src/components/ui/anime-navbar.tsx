@@ -6,12 +6,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
+import { useAuthModal } from '@/stores/auth-modal';
 
 interface NavItem {
   name: string;
   url: string;
   icon: LucideIcon;
   iconOnly?: boolean;
+  requiresAuth?: boolean;
 }
 
 interface NavBarProps {
@@ -44,14 +47,25 @@ function NavTab({
   onHoverEnter: () => void;
   onHoverLeave: () => void;
 }) {
+  const { data: session } = useSession();
+  const authModal = useAuthModal();
   const Icon = item.icon;
   // Show floating tooltip for iconOnly tabs, or ALL tabs when in compact/scrolled mode
   const showTooltip = isScrolled && isHovered && !isActive;
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (item.requiresAuth && !session) {
+      e.preventDefault();
+      authModal.onOpen();
+      return;
+    }
+    onActivate();
+  };
+
   return (
     <Link
       href={item.url}
-      onClick={onActivate}
+      onClick={handleClick}
       onMouseEnter={onHoverEnter}
       onMouseLeave={onHoverLeave}
       className={cn(

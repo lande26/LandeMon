@@ -159,6 +159,7 @@ import { type AxiosResponse } from 'axios';
 import { useRouter } from 'next/navigation';
 import { Users, Loader2, ExternalLink } from 'lucide-react';
 import { trpc } from '@/client/trpc';
+import { env } from '@/env.mjs';
 
 export interface EmbedPlayerRef {
   play: () => void;
@@ -187,6 +188,9 @@ const SERVERS = [
   { id: 'smashystream', name: 'SmashyStream' },
 ];
 
+import { useSession } from 'next-auth/react';
+import { useAuthModal } from '@/stores/auth-modal';
+
 const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
   tmdbId,
   mediaType,
@@ -195,6 +199,8 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
   isHost = false,
   onStateUpdate,
 }, ref) => {
+  const { data: session } = useSession();
+  const authModal = useAuthModal();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   
   const [selectedServer, setSelectedServer] = useState('auto');
@@ -312,18 +318,12 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
 
     const rawUrl = getEmbedUrl(targetServer, mediaType, tmdbId, finalS, finalE);
     
-    // As per user request: only use the Cloudflare ad-mitigation proxy for vidsrc-cc
-    // Other servers have aggressive domain-locks that break API fetch (CORS) when proxied.
-    if (targetServer === 'vidsrc-cc') {
-      const PROXY_URL = process.env.NODE_ENV === "development" 
-        ? "http://127.0.0.1:8787" 
-        : (process.env.NEXT_PUBLIC_AD_PROXY_URL || "https://lande-mon-ad-proxy.your-cloudflare-username.workers.dev");
-        
-      const newUrl = `${PROXY_URL}/?url=${encodeURIComponent(rawUrl)}`;
-      setIframeUrl(newUrl);
-    } else {
-      setIframeUrl(rawUrl);
-    }
+    // 3. (RECOVERY) Disable proxy by default to restore "earlier working" state.
+    // The ad-mitigation proxy was causing buffering and white screens.
+    // We will revisit this once the worker is production-hardened.
+    setIframeUrl(rawUrl);
+    
+    // Log history
     
     logHistoryMutation.mutate({
       tmdbId: numericId,
@@ -395,6 +395,10 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(({
   };
 
   const handleCreateParty = async () => {
+    if (!session) {
+      authModal.onOpen();
+      return;
+    }
     setIsCreatingParty(true);
     try {
       const showData = seasons?.length ? await MovieService.findTvSeries(Number(tmdbId.replace('t-', '').replace('m-', ''))) : await MovieService.findMovie(Number(tmdbId.replace('t-', '').replace('m-', '')));

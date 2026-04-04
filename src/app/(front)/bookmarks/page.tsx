@@ -15,7 +15,7 @@ export default async function BookmarksPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect('/home');
+    redirect('/home?auth=true&callbackUrl=/bookmarks');
   }
 
   // 1. Fetch Bookmark stubs from Database

@@ -7,12 +7,28 @@ import { useRouter } from 'next/navigation';
 import { Users, Search, ArrowRight, Play, Film, Trash2 } from 'lucide-react';
 import CustomImage from '@/components/custom-image';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
 
 export default function PartyLobbyPage() {
   const [parties, setParties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [roomCode, setRoomCode] = useState('');
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.replace('/home?auth=true&callbackUrl=/party');
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     async function fetchParties() {

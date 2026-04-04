@@ -29,7 +29,23 @@ const config = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // swcMinify: false,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-src *; frame-ancestors *; default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;"
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL'
+          }
+        ]
+      }
+    ]
+  }
 };
 
 export default config;

@@ -167,11 +167,11 @@ const Hero = ({ randomShow }: HeroProps) => {
               priority
             />
             <div className="absolute bottom-0 left-0 right-0 top-0">
-              <div className="absolute bottom-[35%] left-[4%] top-0 z-10 flex w-[36%] flex-col justify-end space-y-2">
-                <h1 className="text-[3vw] font-bold">
+              <div className="absolute bottom-[2%] left-[4%] top-0 z-10 flex w-full flex-col justify-end space-y-3 md:bottom-[35%] md:w-[36%]">
+                <h1 className="text-2xl font-bold md:text-[3vw]">
                   {randomShow?.title ?? randomShow?.name}
                 </h1>
-                <div className="flex space-x-2 text-[2vw] font-semibold md:text-[1.2vw]">
+                <div className="flex space-x-2 text-sm font-semibold md:text-[1.2vw]">
                   <p className="text-green-600">
                     {Math.round(randomShow?.vote_average * 10) ?? '-'}% Match
                   </p>
@@ -185,9 +185,9 @@ const Hero = ({ randomShow }: HeroProps) => {
                   <Link prefetch={false} href={handleHref()}>
                     <Button
                       aria-label="Play video"
-                      className="h-auto flex-shrink-0 gap-2 rounded-xl">
+                      className="h-auto flex-shrink-0 gap-2 rounded-xl px-3 md:px-4">
                       <Icons.play className="fill-current" aria-hidden="true" />
-                      Play
+                      <span className="hidden md:inline">Play</span>
                     </Button>
                   </Link>
 
@@ -195,7 +195,7 @@ const Hero = ({ randomShow }: HeroProps) => {
                   <Button
                     aria-label="Open show's details modal"
                     variant="outline"
-                    className="h-auto flex-shrink-0 gap-2 rounded-xl"
+                    className="h-auto flex-shrink-0 gap-2 rounded-xl px-3 md:px-4"
                     onClick={() => {
                       const name = getNameFromShow(randomShow);
                       const p: string =
@@ -214,7 +214,7 @@ const Hero = ({ randomShow }: HeroProps) => {
                       });
                     }}>
                     <Icons.info aria-hidden="true" />
-                    More Info
+                    <span className="hidden md:inline">More Info</span>
                   </Button>
 
                   {/* Bookmark */}
@@ -240,10 +240,12 @@ const Hero = ({ randomShow }: HeroProps) => {
                     aria-label="Start Watch Party"
                     variant="outline"
                     disabled={partyLoading}
-                    className="h-auto flex-shrink-0 gap-2 rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
+                    className="h-auto flex-shrink-0 gap-2 rounded-xl px-3 md:px-4 disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={() => void handleStartParty()}>
                     <Popcorn className="h-5 w-5" />
-                    {partyLoading ? 'Starting…' : 'Watch Party'}
+                    <span className="hidden md:inline">
+                      {partyLoading ? 'Starting…' : 'Watch Party'}
+                    </span>
                   </Button>
                 </div>
               </div>
@@ -251,7 +253,7 @@ const Hero = ({ randomShow }: HeroProps) => {
             <div className="opacity-71 absolute inset-0 right-[26.09%] z-[8] bg-gradient-to-r from-secondary to-85%"></div>
             <div className="absolute bottom-[-1px] left-0 right-0 z-[8] h-[14.7vw] bg-gradient-to-b from-background/0 from-30% via-background/30 via-50% to-background to-80%"></div>
           </div>
-          <div className="relative inset-0 -z-50 mb-5 pb-[60%] sm:pb-[40%]"></div>
+          <div className="relative inset-0 -z-50 mb-0 pb-[100%] sm:pb-[40%]"></div>
         </>
       )}
     </section>

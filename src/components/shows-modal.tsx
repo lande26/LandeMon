@@ -23,6 +23,8 @@ import Link from 'next/link';
 import * as React from 'react';
 import Youtube from 'react-youtube';
 import CustomImage from './custom-image';
+import { useSession } from 'next-auth/react';
+import { useAuthModal } from '@/stores/auth-modal';
 
 type YouTubePlayer = {
   mute: () => void;
@@ -124,7 +126,14 @@ const ShowModal = () => {
   const isBookmarkPending =
     addBookmarkMutation.isLoading || removeBookmarkMutation.isLoading;
 
+  const { data: session } = useSession();
+  const authModal = useAuthModal();
+
   const handleBookmarkToggle = () => {
+    if (!session) {
+      authModal.onOpen();
+      return;
+    }
     if (!modalStore.show?.id || isBookmarkPending) return;
     const payload = {
       tmdbId: modalStore.show.id,

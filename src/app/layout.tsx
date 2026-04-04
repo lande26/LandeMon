@@ -78,6 +78,9 @@ export const metadata: Metadata = {
   other: { referrer: 'no-referrer-when-downgrade' },
 };
 
+import AuthModal from '@/components/auth/auth-modal';
+import SessionProvider from '@/client/session-provider';
+
 export default function RootLayout({
   children,
 }: {
@@ -97,13 +100,14 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <TrpcProvider>
-            {children}
-            <TailwindIndicator />
-            <Toaster position="top-center" theme="dark" richColors />
-            {/* <Analytics />
-          <SpeedInsights /> */}
-          </TrpcProvider>
+          <SessionProvider>
+            <TrpcProvider>
+              {children}
+              <TailwindIndicator />
+              <Toaster position="top-center" theme="dark" richColors />
+              <AuthModal />
+            </TrpcProvider>
+          </SessionProvider>
           {env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
             <>
               <Script
