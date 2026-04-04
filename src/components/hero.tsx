@@ -155,10 +155,11 @@ const Hero = ({ randomShow }: HeroProps) => {
     <section aria-label="Hero" className="w-full">
       {randomShow && (
         <>
-          <div className="absolute inset-0 z-0 h-[145vw] w-full sm:h-[60vw]">
+          <div className="absolute inset-0 z-0 h-[143.75vw] w-full sm:h-[56.25vw]">
             <CustomImage
-              src={`https://image.tmdb.org/t/p/original${randomShow?.backdrop_path ?? randomShow?.poster_path ?? ''
-                }`}
+              src={`https://image.tmdb.org/t/p/original${
+                randomShow?.backdrop_path ?? randomShow?.poster_path ?? ''
+              }`}
               alt={randomShow?.title ?? 'poster'}
               className="-z-40 h-auto w-full object-cover"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 33vw"
@@ -226,10 +227,11 @@ const Hero = ({ randomShow }: HeroProps) => {
                     className="h-auto flex-shrink-0 gap-2 rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={handleBookmarkToggle}>
                     <Icons.bookmark
-                      className={`h-5 w-5 transition-all duration-200 ${isBookmarked
-                        ? 'fill-current text-white'
-                        : 'fill-transparent text-slate-400'
-                        }`}
+                      className={`h-5 w-5 transition-all duration-200 ${
+                        isBookmarked
+                          ? 'fill-current text-white'
+                          : 'fill-transparent text-slate-400'
+                      }`}
                     />
                   </Button>
 
@@ -238,7 +240,7 @@ const Hero = ({ randomShow }: HeroProps) => {
                     aria-label="Start Watch Party"
                     variant="outline"
                     disabled={partyLoading}
-                    className="h-auto flex-shrink-0 gap-2 rounded-xl px-3 md:px-4 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="h-auto flex-shrink-0 gap-2 rounded-xl px-3 disabled:cursor-not-allowed disabled:opacity-50 md:px-4"
                     onClick={() => void handleStartParty()}>
                     <Popcorn className="h-5 w-5" />
                     <span className="hidden md:inline">
