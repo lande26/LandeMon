@@ -155,7 +155,7 @@ const Hero = ({ randomShow }: HeroProps) => {
     <section aria-label="Hero" className="w-full">
       {randomShow && (
         <>
-          <div className="absolute inset-0 z-0 h-[100vw] w-full sm:h-[56.25vw]">
+          <div className="absolute inset-0 z-0 h-[135vw] w-full sm:h-[56.25vw]">
             <CustomImage
               src={`https://image.tmdb.org/t/p/original${
                 randomShow?.backdrop_path ?? randomShow?.poster_path ?? ''
@@ -167,7 +167,7 @@ const Hero = ({ randomShow }: HeroProps) => {
               priority
             />
             <div className="absolute bottom-0 left-0 right-0 top-0">
-              <div className="absolute bottom-[2%] left-[4%] top-0 z-10 flex w-full flex-col justify-end space-y-3 md:bottom-[35%] md:w-[36%]">
+              <div className="absolute bottom-[10%] left-[4%] top-0 z-10 flex w-full flex-col justify-end space-y-3 md:bottom-[35%] md:w-[36%]">
                 <h1 className="text-2xl font-bold md:text-[3vw]">
                   {randomShow?.title ?? randomShow?.name}
                 </h1>
@@ -253,7 +253,7 @@ const Hero = ({ randomShow }: HeroProps) => {
             <div className="opacity-71 absolute inset-0 right-[26.09%] z-[8] bg-gradient-to-r from-secondary to-85%"></div>
             <div className="absolute bottom-[-1px] left-0 right-0 z-[8] h-[14.7vw] bg-gradient-to-b from-background/0 from-30% via-background/30 via-50% to-background to-80%"></div>
           </div>
-          <div className="relative inset-0 -z-50 mb-0 pb-[100%] sm:pb-[40%]"></div>
+          <div className="relative inset-0 -z-50 mb-0 pb-[135%] sm:pb-[40%]"></div>
         </>
       )}
     </section>

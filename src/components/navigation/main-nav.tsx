@@ -145,9 +145,9 @@ export function MainNav({ items, children }: MainNavProps) {
     <>
       <AnimeNavBar
         items={
-          items?.map((item: any) => ({
+          items?.map((item: NavItem) => ({
             name: item.title,
-            icon: (Icons as Record<string, any>)[item.icon ?? 'logo'],
+            icon: Icons[(item.icon as keyof typeof Icons) ?? 'logo'],
             url: item.href ?? '#',
             iconOnly: item.iconOnly,
             requiresAuth: 

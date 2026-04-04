@@ -12,7 +12,7 @@ import { useAuthModal } from '@/stores/auth-modal';
 interface NavItem {
   name: string;
   url: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<any>;
   iconOnly?: boolean;
   requiresAuth?: boolean;
 }
