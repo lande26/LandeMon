@@ -97,10 +97,7 @@ const PROVIDERS = [
 //     }
 // }
 
-async function pingProvider(
-  url: string,
-  timeoutMs = 3000,
-): Promise<boolean> {
+async function pingProvider(url: string, timeoutMs = 3000): Promise<boolean> {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -146,6 +143,18 @@ export async function GET(request: NextRequest) {
 
   // 1 hour TTL for verified working provider per stream. We don't want 24 hours because pirate sites break hourly.
   const CACHE_TTL = 3600;
+
+  // If provider pinging is disabled (e.g. in production on Railway/Vercel),
+  // return a fast default provider and the full provider list so the
+  // client can attempt fallbacks in-browser.
+  if (process.env.DISABLE_PROVIDER_PING === '1') {
+    const defaultProvider = PROVIDERS[0];
+    return NextResponse.json({
+      provider: defaultProvider,
+      url: getEmbedUrl(defaultProvider, type, tmdbId, season, episode),
+      providers: PROVIDERS,
+    });
+  }
 
   const fastestProvider = await getCached<string | null>(
     cacheKey,
