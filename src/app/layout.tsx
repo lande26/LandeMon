@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
@@ -106,7 +107,9 @@ export default function RootLayout({
               {children}
               <TailwindIndicator />
               <Toaster position="top-center" theme="dark" richColors />
-              <AuthModal />
+              <Suspense>
+                <AuthModal />
+              </Suspense>
             </TrpcProvider>
           </SessionProvider>
           {env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
