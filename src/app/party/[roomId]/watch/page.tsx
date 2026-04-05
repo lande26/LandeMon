@@ -1,4 +1,4 @@
-import { getPartyRoom, RoomState } from '@/lib/party';
+import { getPartyRoom, type RoomState } from '@/lib/party';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import WatchPartyClient from '@/components/party/watch-party-client';

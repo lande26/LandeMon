@@ -7,7 +7,7 @@
     "build": "next build",
     "pages:build": "next-on-pages",
     "start": "next start",
-    "lint": "next lint --cache",
+    "lint": "next lint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "prepare": "husky install",

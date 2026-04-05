@@ -1,6 +1,6 @@
-import { Icons } from '@/components/icons';
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
+// import { Icons } from '@/components/icons';
+// import { Badge } from '@/components/ui/badge';
+// import { buttonVariants } from '@/components/ui/button';
 import { siteConfig } from '@/configs/site';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';

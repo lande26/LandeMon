@@ -1,6 +1,6 @@
-import type { NextAuthConfig } from "next-auth"
-import Google from "next-auth/providers/google"
-import GitHub from "next-auth/providers/github"
+import type { NextAuthConfig } from 'next-auth';
+import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
 
 export const authConfig = {
   providers: [
@@ -14,20 +14,20 @@ export const authConfig = {
     }),
   ],
   session: {
-    strategy: "jwt"
+    strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    jwt({ token, user, account: _account }) {
       if (user) {
-        token.id = user.id
+        token.id = user.id;
       }
-      return token
+      return token;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
+        session.user.id = token.id as string;
       }
-      return session
-    }
-  }
-} satisfies NextAuthConfig
+      return session;
+    },
+  },
+} satisfies NextAuthConfig;

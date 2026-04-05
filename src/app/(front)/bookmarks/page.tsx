@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import MovieService from '@/services/MovieService';
 import { type Show } from '@/types';
 import ShowsGrid from '@/components/shows-grid';
-import { siteConfig } from '@/configs/site';
+// import { siteConfig } from '@/configs/site';
 
 export const metadata = {
   title: 'My Bookmarks',
@@ -40,19 +40,23 @@ export default async function BookmarksPage() {
         console.error(`Failed to fetch TMDB data for bookmark ${bm.tmdbId}`);
         return null;
       }
-    })
+    }),
   );
 
   // Filter out any that failed to fetch
   const shows: Show[] = hydratedShows.filter((s): s is Show => s !== null);
 
   return (
-    <div className="flex flex-col gap-6 px-4 pt-24 pb-12 md:px-8">
+    <div className="flex flex-col gap-6 px-4 pb-12 pt-24 md:px-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-50">My List</h1>
-        <p className="text-slate-400">Shows and movies you&apos;ve favorited.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-50">
+          My List
+        </h1>
+        <p className="text-slate-400">
+          Shows and movies you&apos;ve favorited.
+        </p>
       </div>
-      
+
       {shows.length > 0 ? (
         <ShowsGrid shows={shows} />
       ) : (

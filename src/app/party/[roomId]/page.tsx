@@ -1,8 +1,8 @@
-import { getPartyRoom, RoomState } from '@/lib/party';
+import { getPartyRoom, type RoomState } from '@/lib/party';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import PartyJoinScreen from '@/components/party/party-join-screen';
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Join Watch Party | LandeMon',

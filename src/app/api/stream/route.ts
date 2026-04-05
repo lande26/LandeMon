@@ -18,18 +18,18 @@ function getEmbedUrl(
 ) {
   const isMovie = type === MediaType.MOVIE;
   switch (server) {
-    case 'vidsrc-xyz':
-      if (type === MediaType.ANIME)
-        return `https://vidsrc.xyz/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
-      return isMovie
-        ? `https://vidsrc.xyz/embed/movie/${id}`
-        : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
     case 'vidsrc-cc':
       if (type === MediaType.ANIME)
         return `https://vidsrc.cc/v2/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
       return isMovie
         ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`
         : `https://vidsrc.cc/v3/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
+    case 'vidsrc-xyz':
+      if (type === MediaType.ANIME)
+        return `https://vidsrc.xyz/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
+      return isMovie
+        ? `https://vidsrc.xyz/embed/movie/${id}`
+        : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
     case 'vidsync':
       return isMovie
         ? `https://vidsync.xyz/embed/movie/${id}?autoPlay=false`

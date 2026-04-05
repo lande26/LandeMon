@@ -1,8 +1,8 @@
-import { getPartyRoom, RoomState } from '@/lib/party';
+import { getPartyRoom } from '@/lib/party';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import EmbedPlayer from '@/components/watch/embed-player';
-import { MediaType } from '@/types';
+import { type MediaType } from '@/types';
 
 export default async function TheaterPage({
   params,
@@ -24,14 +24,14 @@ export default async function TheaterPage({
   }
 
   return (
-    <div className="h-screen w-screen bg-black overflow-hidden flex flex-col items-center justify-center">
-       <EmbedPlayer 
-         tmdbId={roomState.tmdbId} 
-         mediaType={roomState.mediaType as MediaType} 
-         roomId={roomState.roomId}
-         isWatchParty={true} 
-         isHost={true} 
-       />
+    <div className="flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-black">
+      <EmbedPlayer
+        tmdbId={roomState.tmdbId}
+        mediaType={roomState.mediaType as MediaType}
+        roomId={roomState.roomId}
+        isWatchParty={true}
+        isHost={true}
+      />
     </div>
   );
 }

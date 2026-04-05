@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getPartyRoom, deletePartyRoom } from '@/lib/party';
 import { auth } from '@/auth';
 import { RoomServiceClient } from 'livekit-server-sdk';
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
+    const body = (await req.json()) as { roomId?: string };
     const { roomId } = body;
 
     if (!roomId) {
@@ -23,7 +23,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (roomState.hostId !== session.user.id) {
-      return NextResponse.json({ error: 'Only the host can end the party' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Only the host can end the party' },
+        { status: 403 },
+      );
     }
 
     // Delete from Redis
@@ -47,6 +50,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error('End Party Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    );
   }
 }

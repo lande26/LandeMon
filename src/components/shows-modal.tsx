@@ -226,7 +226,7 @@ const ShowModal = () => {
   const handleChangeMute = () => {
     setIsMuted((state: boolean) => !state);
     if (!youtubeRef.current) return;
-    const videoRef: YouTubePlayer = youtubeRef.current as YouTubePlayer;
+    const videoRef: YouTubePlayer = youtubeRef.current;
     if (isMuted && youtubeRef.current) {
       videoRef.internalPlayer.unMute();
     } else if (youtubeRef.current) {
