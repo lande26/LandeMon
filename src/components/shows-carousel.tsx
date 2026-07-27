@@ -8,18 +8,53 @@ import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { cn, getNameFromShow, getSlug } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { Tv, Film, Star } from 'lucide-react';
 import CustomImage from './custom-image';
 
 interface ShowsCarouselProps {
   title: string;
   shows: Show[];
+  rowIndex?: number;
 }
 
-const ShowsCarousel = ({ title, shows }: ShowsCarouselProps) => {
+const ShowsCarousel = ({ title, shows, rowIndex = 0 }: ShowsCarouselProps) => {
   const pathname = usePathname();
-
   const showsRef = React.useRef<HTMLDivElement>(null);
   const [isScrollable, setIsScrollable] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  // Silky smooth auto-sliding drift effect
+  React.useEffect(() => {
+    const el = showsRef.current;
+    if (!el || isHovered) return;
+
+    let animId: number;
+    const direction = rowIndex % 2 === 0 ? 1 : -1;
+    const speed = 0.3; // Very slow, silky speed (pixels per frame)
+
+    const step = () => {
+      if (!showsRef.current) return;
+      const { scrollLeft, scrollWidth, offsetWidth } = showsRef.current;
+      const maxScroll = scrollWidth - offsetWidth;
+
+      if (maxScroll <= 0) return;
+
+      let nextScroll = scrollLeft + direction * speed;
+
+      // Loop seamlessly at edges
+      if (nextScroll >= maxScroll - 1 && direction > 0) {
+        nextScroll = 0;
+      } else if (nextScroll <= 1 && direction < 0) {
+        nextScroll = maxScroll - 1;
+      }
+
+      showsRef.current.scrollLeft = nextScroll;
+      animId = requestAnimationFrame(step);
+    };
+
+    animId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animId);
+  }, [isHovered, rowIndex, shows.length]);
 
   // handle scroll to left and right
   const scrollToDirection = (direction: 'left' | 'right') => {
@@ -57,7 +92,10 @@ const ShowsCarousel = ({ title, shows }: ShowsCarouselProps) => {
           <h2 className="m-0 px-[4%] text-lg font-semibold text-foreground/80 transition-colors hover:text-foreground sm:text-xl 2xl:px-[60px]">
             {title ?? '-'}
           </h2>
-          <div className="relative w-full items-center justify-center overflow-hidden">
+          <div
+            className="relative w-full items-center justify-center overflow-hidden"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}>
             <Button
               aria-label="Scroll to left"
               variant="ghost"
@@ -98,46 +136,15 @@ export const ShowCard = ({ show }: { show: Show; pathname: string }) => {
     event.currentTarget.src = '/images/grey-thumbnail.jpg';
   };
 
+  const name = getNameFromShow(show);
+  const isTv = show.media_type === MediaType.TV || show.first_air_date !== undefined;
+  const rating = show.vote_average ? Math.round(show.vote_average * 10) : null;
+
   return (
-    // <picture className="relative aspect-[2/3] md:aspect-video">
-    <picture className="relative aspect-[2/3]">
-      <a
-        className="pointer-events-none"
-        aria-hidden={false}
-        role="link"
-        aria-label={getNameFromShow(show)}
-        href={`/${show.media_type}/${getSlug(show.id, getNameFromShow(show))}`}
-      />
-      {/* <source */}
-      {/*   // srcSet={`https://image.tmdb.org/t/p/w342/${show.poster_path ?? show.backdrop_path}`} */}
-      {/*   srcSet={ */}
-      {/*     show.backdrop_path ?? show.poster_path */}
-      {/*       ? `https://image.tmdb.org/t/p/w500/${ */}
-      {/*           show.backdrop_path ?? show.poster_path */}
-      {/*         }` */}
-      {/*       : '/images/grey-thumbnail.jpg' */}
-      {/*   } */}
-      {/*   media="(min-width: 780px)" */}
-      {/* /> */}
-      <CustomImage
-        src={
-          show.poster_path ?? show.backdrop_path
-            ? `https://image.tmdb.org/t/p/w500${
-                show.poster_path ?? show.backdrop_path
-              }`
-            : '/images/grey-thumbnail.jpg'
-        }
-        alt={show.title ?? show.name ?? 'poster'}
-        className="h-full w-full cursor-pointer rounded-lg px-1 transition-all md:hover:scale-110"
-        fill
-        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 33vw"
-        style={{
-          objectFit: 'cover',
-        }}
+    <div className="group relative aspect-[2/3] px-1">
+      <div
         onClick={() => {
-          const name = getNameFromShow(show);
-          const path: string =
-            show.media_type === MediaType.TV ? 'tv-shows' : 'movies';
+          const path: string = isTv ? 'tv-shows' : 'movies';
           window.history.pushState(
             null,
             '',
@@ -149,8 +156,49 @@ export const ShowCard = ({ show }: { show: Show; pathname: string }) => {
             play: true,
           });
         }}
-        onError={imageOnErrorHandler}
-      />
-    </picture>
+        className="relative h-full w-full cursor-pointer overflow-hidden rounded-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-black/50">
+        <CustomImage
+          src={
+            show.poster_path ?? show.backdrop_path
+              ? `https://image.tmdb.org/t/p/w500${
+                  show.poster_path ?? show.backdrop_path
+                }`
+              : '/images/grey-thumbnail.jpg'
+          }
+          alt={name}
+          className="h-full w-full object-cover"
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 100vw, 33vw"
+          onError={imageOnErrorHandler}
+        />
+
+        {/* Media type pill & rating overlay badges */}
+        <div className="pointer-events-none absolute left-2 top-2 z-10 flex items-center gap-1.5">
+          <span className="flex items-center gap-1 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-semibold tracking-wider text-white backdrop-blur-md border border-white/10">
+            {isTv ? (
+              <>
+                <Tv className="h-2.5 w-2.5 text-sky-400" /> TV
+              </>
+            ) : (
+              <>
+                <Film className="h-2.5 w-2.5 text-amber-400" /> Movie
+              </>
+            )}
+          </span>
+          {rating ? (
+            <span className="flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300 backdrop-blur-md border border-white/10">
+              <Star className="h-2.5 w-2.5 fill-amber-300" /> {rating}%
+            </span>
+          ) : null}
+        </div>
+
+        {/* Subtle title & details overlay on hover */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-2.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <p className="line-clamp-2 text-xs font-bold text-white drop-shadow-md">
+            {name}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };

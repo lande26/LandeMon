@@ -9,15 +9,14 @@ import type { CategorizedShows } from '@/types';
 
 // import { api } from "@/lib/api/api"
 import { getIdFromSlug } from '@/lib/utils';
+import React from 'react';
+import type { Show } from '@/types';
+import type { AxiosResponse } from 'axios';
+import MovieService from '@/services/MovieService';
 import ShowModal from '@/components/shows-modal';
 import ShowsCarousel from '@/components/shows-carousel';
 import ShowsGrid from '@/components/shows-grid';
-// import ShowsSkeleton from '@/components/shows-skeleton';
 import { useModalStore } from '@/stores/modal';
-import React from 'react';
-import { type Show } from '@/types/index';
-import { type AxiosResponse } from 'axios';
-import MovieService from '@/services/MovieService';
 
 interface ShowsContainerProps {
   show?: Show;
@@ -25,10 +24,7 @@ interface ShowsContainerProps {
 }
 
 const ShowsContainer = ({ shows }: ShowsContainerProps) => {
-  // const mounted = useMounted();
   const pathname = usePathname();
-
-  // stores
   const modalStore = useModalStore();
   const searchStore = useSearchStore();
 
@@ -60,31 +56,25 @@ const ShowsContainer = ({ shows }: ShowsContainerProps) => {
     } catch (error) {}
   };
 
-  // if (!mounted) {
-  //   return (
-  //     <div className="mt-4 min-h-[800px] pt-[5%]">
-  //       <ShowsSkeleton />
-  //     </div>
-  //   );
-  // }
-
   if (searchStore.query.length > 0) {
     return <ShowsGrid shows={searchStore.shows} query={searchStore.query} />;
   }
 
+  // Collect spotlight titles across categories for marquee
+  const visibleCategories = shows.filter((item) => item.visible);
+
   return (
     <>
       {modalStore.open && <ShowModal />}
-      {shows.map(
-        (item) =>
-          item.visible && (
-            <ShowsCarousel
-              key={item.title}
-              title={item.title}
-              shows={item.shows ?? []}
-            />
-          ),
-      )}
+
+      {visibleCategories.map((item, index) => (
+        <ShowsCarousel
+          key={item.title}
+          title={item.title}
+          shows={item.shows ?? []}
+          rowIndex={index}
+        />
+      ))}
     </>
   );
 };
