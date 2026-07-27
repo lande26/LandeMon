@@ -1,8 +1,3 @@
-// import type { FooterItem, MainNavItem } from "@/types"
-//
-// import { productCategories } from "@/config/products"
-// import { slugify } from "@/lib/utils"
-
 import { env } from '@/env.mjs';
 
 export type SiteConfig = typeof siteConfig;

@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import MovieService from '@/services/MovieService';
 import { type Show } from '@/types';
 import ShowsGrid from '@/components/shows-grid';
-// import { siteConfig } from '@/configs/site';
 
 export const metadata = {
   title: 'My Bookmarks',
@@ -18,13 +17,11 @@ export default async function BookmarksPage() {
     redirect('/home?auth=true&callbackUrl=/bookmarks');
   }
 
-  // 1. Fetch Bookmark stubs from Database
   const bookmarks = await prisma.bookmark.findMany({
     where: { userId: session.user.id },
     orderBy: { addedAt: 'desc' },
   });
 
-  // 2. Hydrate stubs with actual TMDB Data using MovieService
   const hydratedShows = await Promise.all(
     bookmarks.map(async (bm) => {
       try {
@@ -43,7 +40,6 @@ export default async function BookmarksPage() {
     }),
   );
 
-  // Filter out any that failed to fetch
   const shows: Show[] = hydratedShows.filter((s): s is Show => s !== null);
 
   return (

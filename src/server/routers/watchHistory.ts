@@ -38,4 +38,15 @@ export const historyRouter = router({
       orderBy: { watchedAt: "desc" },
     });
   }),
+
+  /** Lightweight query for the Discover / recommendation page */
+  getWatchedFilmIds: protectedProcedure.query(async ({ ctx }) => {
+    const rows = await ctx.prisma.watchHistory.findMany({
+      where: { userId: ctx.session.user.id },
+      orderBy: { watchedAt: "desc" },
+      take: 150,
+      select: { tmdbId: true },
+    });
+    return rows.map((r) => r.tmdbId);
+  }),
 });

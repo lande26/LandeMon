@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-// import { RoomState } from '@/lib/party';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Users, Search, ArrowRight, Play, Film, Trash2 } from 'lucide-react';
@@ -83,7 +82,6 @@ export default function PartyLobbyPage() {
 
   return (
     <div className="relative  mx-auto min-h-[100dvh] max-w-7xl overflow-hidden px-6 py-24 text-white md:px-12">
-      {/* Fancy Background Glow */}
       <div className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-primary/20 blur-[120px]" />
 
       <div className="relative z-10 mb-16 text-center">
@@ -157,7 +155,6 @@ export default function PartyLobbyPage() {
                 href={`/party/${party.roomId}`}
                 key={party.roomId}
                 className="group relative block aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_20px_40px_hsl(var(--primary)/0.15)]">
-                {/* Card Background image */}
                 <div className="absolute inset-0 z-0">
                   <CustomImage
                     src={`https://image.tmdb.org/t/p/w500${party.posterPath ?? ''}`}

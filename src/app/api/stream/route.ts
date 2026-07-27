@@ -6,8 +6,7 @@ import { getCached } from '@/lib/cache';
 // Streaming CDNs actively block server-side pings (Vercel IPs are flagged),
 // so we cannot reliably test providers at request time. Instead, we return
 // the most consistently available provider as the default, and let the client
-// fall back via server switching if it doesn't load.
-// const AUTO_PROVIDER = 'vidsrc-cc';
+
 
 function getEmbedUrl(
   server: string,
@@ -71,31 +70,7 @@ const PROVIDERS = [
   'riveembed',
 ];
 
-// function getEmbedUrl(server: string, type: MediaType, id: string, season: number = 1, eps: number = 1) {
-//     const isMovie = type === MediaType.MOVIE;
-//     switch(server) {
-//       case 'vidsrc-xyz':
-//         if (type === MediaType.ANIME) return `https://vidsrc.xyz/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
-//         return isMovie ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
-//       case 'vidsrc-cc':
-//         if (type === MediaType.ANIME) return `https://vidsrc.cc/v2/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
-//         return isMovie ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false` : `https://vidsrc.cc/v3/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
-//       case 'vidsync':
-//         return isMovie ? `https://vidsync.xyz/embed/movie/${id}?autoPlay=false` : `https://vidsync.xyz/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
-//       case 'vidlink':
-//         return isMovie ? `https://vidlink.pro/movie/${id}?autoplay=false` : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
-//       case 'vidbinge':
-//         return isMovie ? `https://vidbinge.dev/embed/movie/${id}` : `https://vidbinge.dev/embed/tv/${id}/${season}/${eps}`;
-//       case 'vidnest':
-//         return isMovie ? `https://vidnest.fun/movie/${id}` : `https://vidnest.fun/tv/${id}/${season}/${eps}`;
-//       case 'riveembed':
-//         return isMovie ? `https://rivestream.org/embed?type=movie&id=${id}` : `https://rivestream.org/embed?type=tv&id=${id}&season=${season}&episode=${eps}`;
-//       case 'smashystream':
-//         return isMovie ? `https://embed.smashystream.com/playere.php?tmdb=${id}` : `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${season}&episode=${eps}`;
-//       default:
-//         return isMovie ? `https://vidsrc.xyz/embed/movie/${id}` : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
-//     }
-// }
+
 
 async function pingProvider(url: string, timeoutMs = 3000): Promise<boolean> {
   const controller = new AbortController();
@@ -160,7 +135,7 @@ export async function GET(request: NextRequest) {
     cacheKey,
     CACHE_TTL,
     async () => {
-      // Execute the Fallback Chain exactly as specified in the Implementation Plan
+
       for (const provider of PROVIDERS) {
         const testUrl = getEmbedUrl(provider, type, tmdbId, season, episode);
 

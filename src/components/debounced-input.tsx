@@ -29,19 +29,15 @@ export function DebouncedInput({
 }: DebouncedInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  // close search input on clicking outside,
   useOnClickOutside(inputRef, () => {
     if (!value) onChangeStatusOpen(false);
   });
 
-  // configure keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // close search input on pressing escape
       if (e.key === 'Escape') {
         void onChange('');
       }
-      // open search input on pressing ctrl + k or cmd + k
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         if (!inputRef.current) return;
         e.preventDefault();

@@ -5,7 +5,7 @@ export default {
     const url = new URL(request.url);
     let targetUrl = url.searchParams.get('url');
 
-    // 1. Handle Preflight OPTIONS request for CORS
+    // Handle Preflight OPTIONS request for CORS
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         headers: {
@@ -40,7 +40,7 @@ export default {
     try {
       const targetOrigin = new URL(targetUrl).origin;
       
-      // 2. Forward all client headers, but overwrite Referer/Origin for security
+      // Forward all client headers, but overwrite Referer/Origin for security
       const headers = new Headers(request.headers);
       headers.set('User-Agent', request.headers.get('User-Agent') || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
       
@@ -72,7 +72,7 @@ export default {
       const contentType = response.headers.get('content-type') || '';
       let finalResponse = response;
 
-      // 3. Only modify HTML responses for sync script injection
+      // Modify HTML responses for sync script injection
       if (contentType.includes('text/html')) {
         finalResponse = new HTMLRewriter()
           .on('head', {
@@ -118,7 +118,7 @@ export default {
           .transform(response);
       }
 
-      // 4. Set CORS and Frame headers for ALL responses (APIs and Video chunks need CORS too)
+      // Set CORS and Frame headers for ALL responses (APIs and Video chunks need CORS too)
       const resHeaders = new Headers(finalResponse.headers);
       resHeaders.delete('X-Frame-Options');
       resHeaders.delete('Content-Security-Policy');

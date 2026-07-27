@@ -51,7 +51,6 @@ export function getSearchValue(input: string): string {
 }
 
 export function getSlug(id: number, name: string): string {
-  // build slug from name and id
   const regex = /([^\x00-\x7F]|[&$\+,:;=\?@#\s<>\[\]\{\}|\\\^%])+/gm;
   return `${name.toLowerCase().replace(regex, '-')}-${id}`;
 }
@@ -65,7 +64,6 @@ export function buildMovieUrl(show: Show): string {
 }
 
 export function getIdFromSlug(slug: string): number {
-  // get id from slug
   const id: string | undefined = slug.split('-').pop();
   return id ? parseInt(id) : 0;
 }

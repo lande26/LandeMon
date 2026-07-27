@@ -34,7 +34,6 @@ export async function getCached<T>(
   }
 
   try {
-    // 1. Check if the data exists in Redis
     const cachedData = await redis.get<T>(versionedKey);
     
     if (cachedData) {
@@ -42,11 +41,9 @@ export async function getCached<T>(
       return cachedData;
     }
 
-    // 2. Cache Miss: Execute the actual TMDB API fetch
     console.log(`[Cache MISS] ${versionedKey} - Fetching fresh data...`);
     const freshData = await fetchFn();
 
-    // 3. Save the fresh data back to Redis asynchronously with the specified TTL
     if (freshData) {
       // Background execution: Promise.resolve wraps this so we don't block the UI returning the freshData.
       Promise.resolve(
@@ -54,7 +51,6 @@ export async function getCached<T>(
       ).catch(err => console.error(`Failed to execute cache set for ${versionedKey}`, err));
     }
 
-    // 4. Return the fresh data to the caller immediately
     return freshData;
   } catch (error) {
     // Graceful degradation: If Redis fails (e.g. network partition), fallback to hitting TMDB directly

@@ -181,7 +181,6 @@ const Hero = ({ randomShow }: HeroProps) => {
                   {randomShow?.overview ?? '-'}
                 </p>
                 <div className="mt-[1.5vw] flex flex-wrap items-center gap-2">
-                  {/* Play */}
                   <Link prefetch={false} href={handleHref()}>
                     <Button
                       aria-label="Play video"
@@ -191,7 +190,6 @@ const Hero = ({ randomShow }: HeroProps) => {
                     </Button>
                   </Link>
 
-                  {/* More Info */}
                   <Button
                     aria-label="Open show's details modal"
                     variant="outline"
@@ -217,7 +215,6 @@ const Hero = ({ randomShow }: HeroProps) => {
                     <span className="hidden md:inline">More Info</span>
                   </Button>
 
-                  {/* Bookmark */}
                   <Button
                     aria-label={
                       isBookmarked ? 'Remove bookmark' : 'Add bookmark'
@@ -235,7 +232,6 @@ const Hero = ({ randomShow }: HeroProps) => {
                     />
                   </Button>
 
-                  {/* Watch Party */}
                   <Button
                     aria-label="Start Watch Party"
                     variant="outline"

@@ -68,7 +68,7 @@ model Bookmark {
   id        String   @id @default(cuid())
   userId    String
   tmdbId    Int
-  mediaType String   // "movie" | "tv"
+  mediaType String
   addedAt   DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -80,8 +80,8 @@ model WatchHistory {
   id        String   @id @default(cuid())
   userId    String
   tmdbId    Int
-  mediaType String   // "movie" | "tv"
-  progress  Float    // percentage or seconds
+  mediaType String
+  progress  Float
   watchedAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

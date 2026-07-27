@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import MovieService from '@/services/MovieService';
 import { type Show } from '@/types';
 import ShowsGrid from '@/components/shows-grid';
-// import { siteConfig } from '@/configs/site';
 
 export const metadata = {
   title: 'Watch History',

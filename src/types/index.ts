@@ -1,5 +1,3 @@
-// import type { MEDIA_TYPE } from "@prisma/client";
-
 export enum MediaType {
   ALL = 'all',
   TV = 'tv',
@@ -27,7 +25,6 @@ export type Show = {
   adult: boolean;
   backdrop_path: string | null;
   media_type: MediaType;
-  // media_type: string;
   budget: number | null;
   homepage: string | null;
   showId: string;

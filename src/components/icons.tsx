@@ -19,6 +19,7 @@ import {
   Film,
   Clapperboard,
   TrendingUp,
+  Compass,
 } from "lucide-react";
 import BookmarkIcon from "@/components/ui/bookmark-icon";
 import ClockIcon from "@/components/ui/clock-icon";
@@ -35,6 +36,7 @@ export const Icons = {
   pause: Pause,
   volume: Volume2,
   volumeMute: VolumeX,
+  compass: Compass,
   nextjs: (props: IconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path

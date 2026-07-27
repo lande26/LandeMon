@@ -1,6 +1,5 @@
 import type { Variants } from 'framer-motion';
 
-// framer motion
 export const itemsReveal: Variants = {
   hidden: { opacity: 0 },
   visible: {

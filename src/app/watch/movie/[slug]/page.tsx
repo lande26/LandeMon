@@ -1,4 +1,3 @@
-// src/app/watch/movie/[slug]/page.tsx
 import React from 'react';
 import EmbedPlayer from '@/components/watch/embed-player';
 import { MediaType } from '@/types';

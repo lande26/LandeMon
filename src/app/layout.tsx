@@ -8,10 +8,8 @@ import type { Metadata, Viewport } from 'next';
 import { Inter as FontSans, Playfair_Display } from 'next/font/google';
 import localFont from 'next/font/local';
 import { Toaster } from 'sonner';
-// import { Analytics } from '@/components/analytics';
 import { siteConfig } from '@/configs/site';
 import { env } from '@/env.mjs';
-// import { SpeedInsights } from '@vercelspeed-insights/next';
 import Script from 'next/script';
 
 const fontSans = FontSans({
@@ -20,7 +18,6 @@ const fontSans = FontSans({
   display: 'swap',
 });
 
-// Font files can be colocated inside of `pages`
 const fontHeading = localFont({
   src: '../assets/fonts/CalSans-SemiBold.woff2',
   variable: '--font-heading',
