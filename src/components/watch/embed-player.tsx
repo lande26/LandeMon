@@ -7,7 +7,7 @@ import { MediaType, type IEpisode, type ISeason, type Show } from '@/types';
 import MovieService from '@/services/MovieService';
 import { type AxiosResponse } from 'axios';
 import { useRouter } from 'next/navigation';
-import { Users, Loader2, ExternalLink } from 'lucide-react';
+import { Users, Loader2, ExternalLink, RefreshCw } from 'lucide-react';
 import { trpc } from '@/client/trpc';
 
 export interface EmbedPlayerRef {
@@ -28,14 +28,12 @@ export interface EmbedPlayerProps {
 
 const SERVERS = [
   { id: 'auto', name: 'Auto (Fastest)' },
-  { id: 'vidsrc-cc', name: 'VidSrc CC (Default)' },
-  { id: 'vidsrc-xyz', name: 'VidSrc XYZ' },
-  { id: 'vidsync', name: 'VidSync' },
-  { id: 'vidlink', name: 'VidLink' },
-  { id: 'vidbinge', name: 'VidBinge' },
+  { id: 'vidlink', name: 'VidLink (Default)' },
+  { id: '2embed', name: '2Embed' },
   { id: 'vidnest', name: 'VidNest' },
-  { id: 'riveembed', name: 'RiveEmbed' },
-  { id: 'smashystream', name: 'SmashyStream' },
+  { id: 'vidsrc-sbs', name: 'VidSrc SBS' },
+  { id: 'autoembed', name: 'AutoEmbed' },
+  { id: 'moviesapi', name: 'MoviesAPI Club' },
 ];
 
 import { useSession } from 'next-auth/react';
@@ -126,46 +124,34 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
       (server: string, type: MediaType, id: string, season = 1, eps = 1) => {
         const isMovie = type === MediaType.MOVIE;
         switch (server) {
-          case 'vidsrc-xyz':
-            if (type === MediaType.ANIME)
-              return `https://vidsrc.xyz/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
-            return isMovie
-              ? `https://vidsrc.xyz/embed/movie/${id}`
-              : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
-          case 'vidsrc-cc':
-            if (type === MediaType.ANIME)
-              return `https://vidsrc.cc/v2/embed/anime/tmdb${id}/${eps}/sub?autoPlay=false`;
-            return isMovie
-              ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`
-              : `https://vidsrc.cc/v3/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
-          case 'vidsync':
-            return isMovie
-              ? `https://vidsync.xyz/embed/movie/${id}?autoPlay=false`
-              : `https://vidsync.xyz/embed/tv/${id}/${season}/${eps}?autoPlay=false`;
           case 'vidlink':
             return isMovie
               ? `https://vidlink.pro/movie/${id}?autoplay=false`
               : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
-          case 'vidbinge':
+          case '2embed':
             return isMovie
-              ? `https://vidbinge.dev/embed/movie/${id}`
-              : `https://vidbinge.dev/embed/tv/${id}/${season}/${eps}`;
+              ? `https://www.2embed.cc/embed/${id}`
+              : `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${eps}`;
           case 'vidnest':
             return isMovie
               ? `https://vidnest.fun/movie/${id}`
               : `https://vidnest.fun/tv/${id}/${season}/${eps}`;
-          case 'riveembed':
+          case 'vidsrc-sbs':
             return isMovie
-              ? `https://rivestream.org/embed?type=movie&id=${id}`
-              : `https://rivestream.org/embed?type=tv&id=${id}&season=${season}&episode=${eps}`;
-          case 'smashystream':
+              ? `https://vidsrc.sbs/embed/movie/${id}`
+              : `https://vidsrc.sbs/embed/tv/${id}/${season}/${eps}`;
+          case 'autoembed':
             return isMovie
-              ? `https://embed.smashystream.com/playere.php?tmdb=${id}`
-              : `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${season}&episode=${eps}`;
+              ? `https://player.autoembed.cc/embed/movie/${id}`
+              : `https://player.autoembed.cc/embed/tv/${id}/${season}/${eps}`;
+          case 'moviesapi':
+            return isMovie
+              ? `https://moviesapi.club/movie/${id}`
+              : `https://moviesapi.club/tv/${id}-${season}-${eps}`;
           default:
             return isMovie
-              ? `https://vidsrc.xyz/embed/movie/${id}`
-              : `https://vidsrc.xyz/embed/tv/${id}/${season}/${eps}`;
+              ? `https://vidlink.pro/movie/${id}?autoplay=false`
+              : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
         }
       },
       [],
@@ -272,10 +258,10 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
                 // if none succeeded, fall back to provided data.provider or default below
               }
             } else {
-              targetServer = 'vidsrc-cc';
+              targetServer = 'vidlink';
             }
           } catch (e) {
-            targetServer = 'vidsrc-cc';
+            targetServer = 'vidlink';
           }
         }
 
@@ -375,6 +361,20 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
       }
       hasLoaded.current = true;
     }, [mediaType, tmdbId, loadShows, updateIframe, selectedServer]);
+
+    const handleNextServer = () => {
+      const activeServers = SERVERS.filter((s) => s.id !== 'auto');
+      const currentIndex = activeServers.findIndex(
+        (s) => s.id === selectedServer,
+      );
+      const nextServer =
+        activeServers[(currentIndex + 1) % activeServers.length] ??
+        activeServers[0];
+      if (nextServer) {
+        setSelectedServer(nextServer.id);
+        void updateIframe(nextServer.id);
+      }
+    };
 
     const handleServerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const newServer = e.target.value;
@@ -518,6 +518,14 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
                 {SERVERS.find((s) => s.id === selectedServer)?.name ??
                   selectedServer}
               </span>
+            )}
+            {(!isWatchParty || isHost) && (
+              <button
+                onClick={handleNextServer}
+                title="Try Next Server"
+                className="flex items-center justify-center rounded-lg p-1 text-white/80 transition-colors hover:bg-white/10 hover:text-white">
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
             )}
           </div>
         </div>
