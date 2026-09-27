@@ -15,39 +15,63 @@ function getEmbedUrl(
   eps = 1,
 ) {
   const isMovie = type === MediaType.MOVIE;
+  const cleanId = String(id).replace(/^[tm]-/, '');
   switch (server) {
+    case 'viduki':
+    case 'viduki-1':
+      return isMovie
+        ? `https://www.viduki.net/1/movie/${cleanId}?color=6366f1`
+        : `https://www.viduki.net/1/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+    case 'viduki-2':
+      return isMovie
+        ? `https://www.viduki.net/2/movie/${cleanId}?color=6366f1`
+        : `https://www.viduki.net/2/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+    case 'viduki-3':
+      return isMovie
+        ? `https://www.viduki.net/3/movie/${cleanId}?color=6366f1`
+        : `https://www.viduki.net/3/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+    case 'viduki-4':
+      return isMovie
+        ? `https://www.viduki.net/4/movie/${cleanId}?color=6366f1`
+        : `https://www.viduki.net/4/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+    case 'vidhive':
+      return isMovie
+        ? `https://vidhive.lol/embed/movie/${cleanId}?autoPlay=false&theme=6366f1`
+        : `https://vidhive.lol/embed/tv/${cleanId}/${season}/${eps}?autoPlay=false&nextButton=true&autoNext=true&theme=6366f1`;
     case 'vidlink':
       return isMovie
-        ? `https://vidlink.pro/movie/${id}?autoplay=false`
-        : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
+        ? `https://vidlink.pro/movie/${cleanId}?autoplay=false`
+        : `https://vidlink.pro/tv/${cleanId}/${season}/${eps}?autoplay=false`;
     case '2embed':
       return isMovie
-        ? `https://www.2embed.cc/embed/${id}`
-        : `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${eps}`;
+        ? `https://www.2embed.cc/embed/${cleanId}`
+        : `https://www.2embed.cc/embedtv/${cleanId}&s=${season}&e=${eps}`;
     case 'vidnest':
       return isMovie
-        ? `https://vidnest.fun/movie/${id}`
-        : `https://vidnest.fun/tv/${id}/${season}/${eps}`;
+        ? `https://vidnest.fun/movie/${cleanId}`
+        : `https://vidnest.fun/tv/${cleanId}/${season}/${eps}`;
     case 'vidsrc-sbs':
       return isMovie
-        ? `https://vidsrc.sbs/embed/movie/${id}`
-        : `https://vidsrc.sbs/embed/tv/${id}/${season}/${eps}`;
+        ? `https://vidsrc.sbs/embed/movie/${cleanId}`
+        : `https://vidsrc.sbs/embed/tv/${cleanId}/${season}/${eps}`;
     case 'autoembed':
       return isMovie
-        ? `https://player.autoembed.cc/embed/movie/${id}`
-        : `https://player.autoembed.cc/embed/tv/${id}/${season}/${eps}`;
+        ? `https://player.autoembed.cc/embed/movie/${cleanId}`
+        : `https://player.autoembed.cc/embed/tv/${cleanId}/${season}/${eps}`;
     case 'moviesapi':
       return isMovie
-        ? `https://moviesapi.club/movie/${id}`
-        : `https://moviesapi.club/tv/${id}-${season}-${eps}`;
+        ? `https://moviesapi.club/movie/${cleanId}`
+        : `https://moviesapi.club/tv/${cleanId}-${season}-${eps}`;
     default:
       return isMovie
-        ? `https://vidlink.pro/movie/${id}?autoplay=false`
-        : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
+        ? `https://www.viduki.net/1/movie/${cleanId}?color=6366f1`
+        : `https://www.viduki.net/1/tv/${cleanId}/${season}/${eps}?color=6366f1`;
   }
 }
 
 const PROVIDERS = [
+  'viduki',
+  'vidhive',
   'vidlink',
   '2embed',
   'vidnest',

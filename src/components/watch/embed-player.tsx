@@ -28,7 +28,9 @@ export interface EmbedPlayerProps {
 
 const SERVERS = [
   { id: 'auto', name: 'Auto (Fastest)' },
-  { id: 'vidlink', name: 'VidLink (Default)' },
+  { id: 'viduki', name: 'Viduki' },
+  { id: 'vidhive', name: 'VidHive' },
+  { id: 'vidlink', name: 'VidLink' },
   { id: '2embed', name: '2Embed' },
   { id: 'vidnest', name: 'VidNest' },
   { id: 'vidsrc-sbs', name: 'VidSrc SBS' },
@@ -56,15 +58,150 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const [selectedServer, setSelectedServer] = useState('auto');
+    const currentActiveServerRef = useRef('viduki');
     const [currentEpisode, setCurrentEpisode] = useState<{
       s: number;
       e: number;
     } | null>(null);
 
+    const logHistoryMutation = trpc.history.logHistory.useMutation();
+
+    const lastProgressLogRef = useRef<{ time: number; progress: number }>({
+      time: 0,
+      progress: -1,
+    });
+
+    const logProgressSafe = useCallback(
+      (progressPct: number) => {
+        const now = Date.now();
+        const numericId = Number(tmdbId.replace('t-', '').replace('m-', ''));
+        if (
+          now - lastProgressLogRef.current.time > 10000 ||
+          Math.abs(progressPct - lastProgressLogRef.current.progress) >= 5
+        ) {
+          lastProgressLogRef.current = { time: now, progress: progressPct };
+          void logHistoryMutation.mutate({
+            tmdbId: numericId,
+            mediaType:
+              mediaType === MediaType.ANIME
+                ? 'anime'
+                : mediaType === MediaType.MOVIE
+                  ? 'movie'
+                  : 'tv',
+            progress: progressPct,
+          });
+        }
+      },
+      [logHistoryMutation, mediaType, tmdbId],
+    );
+
+    const getEmbedUrl = useCallback(
+      (server: string, type: MediaType, id: string, season = 1, eps = 1) => {
+        const isMovie = type === MediaType.MOVIE;
+        const cleanId = id.replace(/^[tm]-/, '');
+        switch (server) {
+          case 'viduki':
+          case 'viduki-1':
+            return isMovie
+              ? `https://www.viduki.net/1/movie/${cleanId}?color=6366f1`
+              : `https://www.viduki.net/1/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+          case 'viduki-2':
+            return isMovie
+              ? `https://www.viduki.net/2/movie/${cleanId}?color=6366f1`
+              : `https://www.viduki.net/2/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+          case 'viduki-3':
+            return isMovie
+              ? `https://www.viduki.net/3/movie/${cleanId}?color=6366f1`
+              : `https://www.viduki.net/3/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+          case 'viduki-4':
+            return isMovie
+              ? `https://www.viduki.net/4/movie/${cleanId}?color=6366f1`
+              : `https://www.viduki.net/4/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+          case 'vidhive':
+            return isMovie
+              ? `https://vidhive.lol/embed/movie/${cleanId}?autoPlay=false&theme=6366f1`
+              : `https://vidhive.lol/embed/tv/${cleanId}/${season}/${eps}?autoPlay=false&nextButton=true&autoNext=true&theme=6366f1`;
+          case 'vidlink':
+            return isMovie
+              ? `https://vidlink.pro/movie/${cleanId}?autoplay=false`
+              : `https://vidlink.pro/tv/${cleanId}/${season}/${eps}?autoplay=false`;
+          case '2embed':
+            return isMovie
+              ? `https://www.2embed.cc/embed/${cleanId}`
+              : `https://www.2embed.cc/embedtv/${cleanId}&s=${season}&e=${eps}`;
+          case 'vidnest':
+            return isMovie
+              ? `https://vidnest.fun/movie/${cleanId}`
+              : `https://vidnest.fun/tv/${cleanId}/${season}/${eps}`;
+          case 'vidsrc-sbs':
+            return isMovie
+              ? `https://vidsrc.sbs/embed/movie/${cleanId}`
+              : `https://vidsrc.sbs/embed/tv/${cleanId}/${season}/${eps}`;
+          case 'autoembed':
+            return isMovie
+              ? `https://player.autoembed.cc/embed/movie/${cleanId}`
+              : `https://player.autoembed.cc/embed/tv/${cleanId}/${season}/${eps}`;
+          case 'moviesapi':
+            return isMovie
+              ? `https://moviesapi.club/movie/${cleanId}`
+              : `https://moviesapi.club/tv/${cleanId}-${season}-${eps}`;
+          default:
+            return isMovie
+              ? `https://www.viduki.net/1/movie/${cleanId}?color=6366f1`
+              : `https://www.viduki.net/1/tv/${cleanId}/${season}/${eps}?color=6366f1`;
+        }
+      },
+      [],
+    );
+
+    const setIframeUrl = (newUrl: string) => {
+      if (!iframeRef.current) return;
+      console.log(`Loading Stream Server: ${newUrl}`);
+      iframeRef.current.src = newUrl;
+      iframeRef.current.style.opacity = '0';
+      loadingRef.current?.style.setProperty('display', 'flex');
+    };
+
+    const handleVidukiFallback = useCallback(() => {
+      const fallbackChain = [
+        'viduki',
+        'viduki-2',
+        'viduki-3',
+        'viduki-4',
+        'vidhive',
+        'vidlink',
+        '2embed',
+        'vidnest',
+        'vidsrc-sbs',
+        'autoembed',
+        'moviesapi',
+      ];
+      const current = currentActiveServerRef.current;
+      const currentIndex = fallbackChain.indexOf(current);
+      const nextServer = fallbackChain[currentIndex + 1] ?? 'vidhive';
+      console.warn(
+        `[Viduki Fallback] Auto-switching from ${current} to fallback server: ${nextServer}`,
+      );
+      currentActiveServerRef.current = nextServer;
+      if (selectedServer !== 'auto') {
+        setSelectedServer(
+          nextServer.startsWith('viduki') ? 'viduki' : nextServer,
+        );
+      }
+      const s = currentEpisode?.s ?? 1;
+      const e = currentEpisode?.e ?? 1;
+      const rawUrl = getEmbedUrl(nextServer, mediaType, tmdbId, s, e);
+      setIframeUrl(rawUrl);
+    }, [currentEpisode, getEmbedUrl, mediaType, selectedServer, tmdbId]);
+
     React.useImperativeHandle(ref, () => ({
       play: () => {
         iframeRef.current?.contentWindow?.postMessage(
           JSON.stringify({ source: 'landemon-party', action: 'play' }),
+          '*',
+        );
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'VIDHIVE_PLAYER_COMMAND', action: 'play' },
           '*',
         );
       },
@@ -73,10 +210,18 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
           JSON.stringify({ source: 'landemon-party', action: 'pause' }),
           '*',
         );
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'VIDHIVE_PLAYER_COMMAND', action: 'pause' },
+          '*',
+        );
       },
       seek: (time: number) => {
         iframeRef.current?.contentWindow?.postMessage(
           JSON.stringify({ source: 'landemon-party', action: 'seek', time }),
+          '*',
+        );
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'VIDHIVE_PLAYER_COMMAND', action: 'seek', time },
           '*',
         );
       },
@@ -94,8 +239,116 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
 
     React.useEffect(() => {
       const handleMessage = (e: MessageEvent) => {
-        const data = e.data as { source?: string; state?: unknown } | undefined;
-        if (data?.source === 'landemon-proxy' && onStateUpdate) {
+        const data = e.data as
+          | {
+              type?: string;
+              source?: string;
+              state?: unknown;
+              data?: any;
+            }
+          | undefined;
+
+        if (!data) return;
+
+        // 1. Viduki: Server Fallback Events
+        const isVidukiOrigin =
+          typeof e.origin === 'string' && e.origin.includes('viduki.net');
+        if (
+          isVidukiOrigin &&
+          (data.type === 'viduki:all-servers-failed' ||
+            data.type === 'all-servers-failed')
+        ) {
+          console.warn(
+            '[Viduki] All backend servers failed on current API, swapping to fallback...',
+            data,
+          );
+          handleVidukiFallback();
+          return;
+        }
+
+        // 2. Viduki: Watch Progress (MEDIA_DATA)
+        if (isVidukiOrigin && data.type === 'MEDIA_DATA' && data.data) {
+          try {
+            localStorage.setItem(
+              'vidukinet-Progress',
+              JSON.stringify(data.data),
+            );
+          } catch (err) {
+            console.warn(
+              'Failed to save vidukinet-Progress to localStorage:',
+              err,
+            );
+          }
+          const cleanId = tmdbId.replace(/^[tm]-/, '');
+          const entry = data.data[cleanId] ?? Object.values(data.data)[0];
+          if (
+            entry?.progress?.duration &&
+            entry.progress.watched !== undefined
+          ) {
+            const pct = Math.min(
+              100,
+              Math.round(
+                (entry.progress.watched / entry.progress.duration) * 100,
+              ),
+            );
+            logProgressSafe(pct);
+          }
+          return;
+        }
+
+        // 3. VidHive: Player Events
+        if (data.type === 'VIDHIVE_PLAYER_EVENT' && data.data) {
+          const p = data.data;
+          if (onStateUpdate) {
+            onStateUpdate({
+              event: p.event,
+              currentTime: p.currentTime,
+              duration: p.duration,
+              serverData: {
+                server: selectedServer,
+                s: currentEpisode?.s,
+                e: currentEpisode?.e,
+              },
+            });
+          }
+          if (p.duration && p.currentTime !== undefined) {
+            const pct = Math.min(
+              100,
+              Math.round((p.currentTime / p.duration) * 100),
+            );
+            logProgressSafe(pct);
+          }
+          return;
+        }
+
+        // 4. VidHive: Media Data Snapshot
+        if (data.type === 'VIDHIVE_MEDIA_DATA' && data.data?.entry) {
+          const entry = data.data.entry;
+          try {
+            localStorage.setItem('vidhive-Progress', JSON.stringify(entry));
+          } catch (err) {
+            console.warn(
+              'Failed to save vidhive-Progress to localStorage:',
+              err,
+            );
+          }
+          if (
+            entry.progress?.duration &&
+            entry.progress.watched !== undefined
+          ) {
+            const pct = Math.min(
+              100,
+              Math.round(
+                (entry.progress.watched / entry.progress.duration) * 100,
+              ),
+            );
+            logProgressSafe(pct);
+          }
+          return;
+        }
+
+        // 5. LandeMon Proxy state update (for backwards compatibility / custom proxies)
+        if (data.source === 'landemon-proxy' && onStateUpdate) {
           const state = (data.state ?? {}) as Record<string, unknown>;
           onStateUpdate({
             ...state,
@@ -107,9 +360,17 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
           });
         }
       };
+
       window.addEventListener('message', handleMessage);
       return () => window.removeEventListener('message', handleMessage);
-    }, [onStateUpdate, selectedServer, currentEpisode]);
+    }, [
+      onStateUpdate,
+      selectedServer,
+      currentEpisode,
+      handleVidukiFallback,
+      logProgressSafe,
+      tmdbId,
+    ]);
 
     const loadingRef = useRef<HTMLDivElement>(null);
     const [seasons, setSeasons] = useState<ISeason[] | null>(null);
@@ -117,53 +378,6 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
     const [isCreatingParty, setIsCreatingParty] = useState(false);
     const hasLoaded = useRef(false);
     const router = useRouter();
-
-    const logHistoryMutation = trpc.history.logHistory.useMutation();
-
-    const getEmbedUrl = useCallback(
-      (server: string, type: MediaType, id: string, season = 1, eps = 1) => {
-        const isMovie = type === MediaType.MOVIE;
-        switch (server) {
-          case 'vidlink':
-            return isMovie
-              ? `https://vidlink.pro/movie/${id}?autoplay=false`
-              : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
-          case '2embed':
-            return isMovie
-              ? `https://www.2embed.cc/embed/${id}`
-              : `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${eps}`;
-          case 'vidnest':
-            return isMovie
-              ? `https://vidnest.fun/movie/${id}`
-              : `https://vidnest.fun/tv/${id}/${season}/${eps}`;
-          case 'vidsrc-sbs':
-            return isMovie
-              ? `https://vidsrc.sbs/embed/movie/${id}`
-              : `https://vidsrc.sbs/embed/tv/${id}/${season}/${eps}`;
-          case 'autoembed':
-            return isMovie
-              ? `https://player.autoembed.cc/embed/movie/${id}`
-              : `https://player.autoembed.cc/embed/tv/${id}/${season}/${eps}`;
-          case 'moviesapi':
-            return isMovie
-              ? `https://moviesapi.club/movie/${id}`
-              : `https://moviesapi.club/tv/${id}-${season}-${eps}`;
-          default:
-            return isMovie
-              ? `https://vidlink.pro/movie/${id}?autoplay=false`
-              : `https://vidlink.pro/tv/${id}/${season}/${eps}?autoplay=false`;
-        }
-      },
-      [],
-    );
-
-    const setIframeUrl = (newUrl: string) => {
-      if (!iframeRef.current) return;
-      console.log(`Loading Stream Server: ${newUrl}`);
-      iframeRef.current.src = newUrl;
-      iframeRef.current.style.opacity = '0';
-      loadingRef.current?.style.setProperty('display', 'flex');
-    };
 
     const onIframeLoad = () => {
       if (!iframeRef.current) return;
@@ -242,12 +456,11 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
                 for (const p of providersToTry) {
                   const url = getEmbedUrl(p, mediaType, tmdbId, finalS, finalE);
                   // attempt to load; if success, set selected server and return early
-                  // note: this will set the iframe to the working provider
-                  // and avoid the later setIframeUrl call
                   // eslint-disable-next-line no-await-in-loop
                   const ok = await tryLoad(url);
                   if (ok) {
                     setSelectedServer(p);
+                    currentActiveServerRef.current = p;
                     // ensure loading visuals are correct
                     iframeRef.current?.style.setProperty('opacity', '1');
                     loadingRef.current?.style.setProperty('display', 'none');
@@ -258,10 +471,10 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
                 // if none succeeded, fall back to provided data.provider or default below
               }
             } else {
-              targetServer = 'vidlink';
+              targetServer = 'viduki';
             }
           } catch (e) {
-            targetServer = 'vidlink';
+            targetServer = 'viduki';
           }
         }
 
@@ -272,6 +485,8 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
           setSelectedServer(targetServer);
         }
 
+        currentActiveServerRef.current = targetServer;
+
         const rawUrl = getEmbedUrl(
           targetServer,
           mediaType,
@@ -280,12 +495,9 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
           finalE,
         );
 
-        // 3. (RECOVERY) Disable proxy by default to restore "earlier working" state.
-        // The ad-mitigation proxy was causing buffering and white screens.
-        // We will revisit this once the worker is production-hardened.
         setIframeUrl(rawUrl);
 
-        // Log history
+        // Log initial view
         void logHistoryMutation.mutate({
           tmdbId: numericId,
           mediaType:
@@ -544,6 +756,7 @@ const EmbedPlayer = React.forwardRef<EmbedPlayerRef, EmbedPlayerProps>(
           ref={iframeRef}
           className="h-full w-full border-none transition-opacity duration-300"
           allowFullScreen
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
           referrerPolicy="no-referrer-when-downgrade"
           style={{ opacity: 0 }}
         />

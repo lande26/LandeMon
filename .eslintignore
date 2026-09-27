@@ -4,3 +4,5 @@ src/generated/prisma/
 .next/
 out/
 build/
+load-tests/
+nothing-to-watch/

@@ -1,9 +1,18 @@
 const path = require('path');
 
-const buildEslintCommand = (filenames) =>
-  `next lint --fix --file ${filenames
+const buildEslintCommand = (filenames) => {
+  const filesToLint = filenames
     .map((f) => path.relative(process.cwd(), f))
-    .join(' --file ')}`;
+    .filter(
+      (f) =>
+        !f.startsWith('load-tests') &&
+        !f.startsWith('nothing-to-watch') &&
+        !f.startsWith('ad-proxy-worker'),
+    );
+
+  if (filesToLint.length === 0) return 'echo "No files to lint"';
+  return `next lint --fix --file ${filesToLint.join(' --file ')}`;
+};
 
 module.exports = {
   '*.{js,jsx,ts,tsx}': [buildEslintCommand],

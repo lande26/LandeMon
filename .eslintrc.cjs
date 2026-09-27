@@ -4,6 +4,16 @@ const config = {
   parserOptions: {
     project: true,
   },
+  ignorePatterns: [
+    'node_modules/',
+    'load-tests/',
+    'nothing-to-watch/',
+    'ad-proxy-worker/',
+    '.next/',
+    'out/',
+    'build/',
+    'src/generated/prisma/',
+  ],
   plugins: ['@typescript-eslint'],
   extends: [
     'next/core-web-vitals',
